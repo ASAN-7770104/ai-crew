@@ -1,19 +1,19 @@
 ---
 name: decision-memo
-description: "Записка для решения с вариантами, цифрами, рисками и рекомендацией. Использовать, когда нужно выбрать между вариантами."
+description: "A decision memo with options, numbers, risks and a recommendation. Use when choosing between options. Записка для решения с вариантами, цифрами, рисками и рекомендацией."
 ---
 
-# Записка решения
-
+# Decision memo
 ```
-Решение: одной строкой, что выбираем
-Срок: когда решить и что будет, если не решать
-Контекст: 3–5 фактов с источниками
-Варианты: 2–3, у каждого выгода, цена, риск, обратимость
-Рекомендация: один вариант и почему
-Что должно оказаться правдой: проверяемые допущения
-Пересмотр: дата и сигнал, при котором решение меняем
+Decision: one line, what we choose
+Deadline: when to decide and what happens if we do not
+Context: 3–5 facts with sources
+Options: 2–3, each with benefit, cost, risk, reversibility
+Recommendation: one option and why
+What must be true: testable assumptions
+Review: date and the signal that would change the decision
 ```
+Include "change nothing" if it is realistic. Mark irreversible decisions separately.
+Save to `company/decisions/`.
 
-Включай вариант «ничего не менять», если он реален. Необратимые решения помечай отдельно.
-Сохрани в `company/decisions/`.
+Answer in the user's language.

@@ -53,13 +53,29 @@ test('unit economics with a loss and with bad input', () => {
 });
 
 test('implementation options are complete and written into the guide', () => {
-  const options = JSON.parse(read('data/options.json'));
-  const guide = build().get('docs/IMPLEMENTATION.md');
-  for (const option of options) {
-    for (const key of ['id', 'name', 'who', 'effort', 'need', 'limit']) assert.ok(option[key], `${option.id}.${key}`);
-    assert.ok(option.steps.length >= 3, option.id);
-    assert.ok(guide.includes(`## ${option.name}`));
+  for (const [data, path] of [['data/options.json', 'docs/IMPLEMENTATION.ru.md'], ['data/options.en.json', 'docs/IMPLEMENTATION.md']]) {
+    const options = JSON.parse(read(data));
+    const guide = build().get(path);
+    for (const option of options) {
+      for (const key of ['id', 'name', 'who', 'effort', 'need', 'limit']) assert.ok(option[key], `${option.id}.${key}`);
+      assert.ok(option.steps.length >= 3, option.id);
+      assert.ok(guide.includes(`## ${option.name}`));
+    }
   }
+});
+
+test('both languages are complete and the English one holds no Russian', () => {
+  const russian = loadRoles('ru');
+  const english = loadRoles('en');
+  assert.deepEqual(english.map((r) => r.id), russian.map((r) => r.id));
+  assert.deepEqual(loadSkills('en').map((s) => s.id), loadSkills('ru').map((s) => s.id));
+  for (const [i, role] of english.entries()) {
+    for (const key of ['owns', 'outputs', 'kpis', 'connectors', 'approvals', 'never']) assert.equal(role[key].length, russian[i][key].length, `${role.id}.${key}`);
+  }
+  const files = build();
+  const embedded = files.get('dist/artifact.html').match(/const ALL = (\{.*\});\n/)[1];
+  const text = JSON.stringify(JSON.parse(embedded).en) + files.get('docs/IMPLEMENTATION.md').replace('[Русский]', '');
+  assert.deepEqual(text.match(/[^"]{0,30}[А-Яа-яЁё]{2,}[^"]{0,30}/g)?.slice(0, 5) ?? [], []);
 });
 
 test('every suggested pack has a source, a licence note and an install command', () => {

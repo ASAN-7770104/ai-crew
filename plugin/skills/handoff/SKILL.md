@@ -1,21 +1,20 @@
 ---
 name: handoff
-description: "Передача задачи другому агенту или человеку без потери контекста. Использовать, когда задача выходит за пределы роли."
+description: "Hand a task to another agent or person without losing context. Use when a task goes beyond the role. Передача задачи другому агенту или человеку без потери контекста."
 ---
 
-# Передача задачи
-
-Добавь в `company/board.md`:
-
+# Handover
+Add to `company/board.md`:
 ```
-Кому: роль
-От кого: роль
-Задача: результат одной строкой
-Зачем: какая цель компании
-Входные данные: файлы и факты с источниками
-Готово, когда: проверяемый признак
-Срок
-Ограничения и что требует согласия человека
+To: role
+From: role
+Task: the result in one line
+Why: which company goal
+Inputs: files and facts with sources
+Done when: a checkable sign
+Deadline
+Limits and what needs a person's approval
 ```
+The receiver confirms or asks questions in the same entry.
 
-Принимающий подтверждает получение или задаёт вопросы в той же записи.
+Answer in the user's language.

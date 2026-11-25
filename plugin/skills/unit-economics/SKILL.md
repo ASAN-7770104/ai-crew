@@ -1,24 +1,20 @@
 ---
 name: unit-economics
-description: "Расчёт маржи, точки безубыточности, LTV и CAC по цифрам бизнеса скриптом, без счёта в уме. Использовать для цен, скидок и проверки прибыльности."
+description: "Margin, break-even, LTV and CAC computed from the business's numbers by a script, not in your head. Use for prices, discounts and profitability. Расчёт маржи, точки безубыточности, LTV и CAC по цифрам бизнеса скриптом, без счёта в уме."
 ---
 
-# Юнит-экономика
-
-1. Собери данные: цена, переменные расходы на продажу, комиссия платежей долей, расходы на привлечение клиента, покупок в месяц на клиента, срок жизни клиента в месяцах, постоянные расходы в месяц.
-2. Запиши их в JSON и запусти скрипт из папки этого навыка:
-
+# Unit economics
+1. Collect: price, variable cost per sale, payment fee as a share, customer acquisition cost, purchases per customer per month, customer lifetime in months, fixed costs per month.
+2. Write them as JSON and run the script from this skill's folder:
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/unit-economics/unit-economics.mjs" input.json
 ```
-
-Пример `input.json`:
-
+Example `input.json`:
 ```json
 {"price": 100, "variableCost": 35, "paymentFee": 0.03, "cac": 40, "purchasesPerMonth": 1, "lifetimeMonths": 6, "fixedCosts": 3000}
 ```
+3. Explain the result plainly: does a sale earn money, does a customer pay back, how many sales a month are needed.
+4. Show what happens with a price 10% lower and acquisition cost 30% higher.
+Mark assumptions separately from facts. This is a calculation, not investment or tax advice.
 
-3. Объясни результат простыми словами: зарабатывает ли продажа, окупается ли клиент, сколько продаж нужно в месяц.
-4. Покажи, что будет при цене на 10% ниже и расходах на привлечение на 30% выше.
-
-Допущения помечай отдельно от фактов. Это расчёт, а не инвестиционный или налоговый совет.
+Answer in the user's language.

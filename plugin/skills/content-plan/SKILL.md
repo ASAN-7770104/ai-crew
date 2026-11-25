@@ -1,14 +1,14 @@
 ---
 name: content-plan
-description: "Контент-календарь от целей и болей клиента: темы, хуки, форматы, призыв и метрика. Использовать для плана публикаций."
+description: "A content calendar from the goals and the customer's pains: topics, hooks, formats, call to action and metric. Use to plan publications. Контент-календарь от целей и болей клиента: темы, хуки, форматы, призыв и метрика."
 ---
 
-# Контент-план
+# Content plan
+1. Confirm the goal of the period (awareness, leads, retention) and one target group.
+2. Write five pains and five wishes in the customer's own words. Source: interviews, reviews, chats.
+3. A 14-day table: date, platform, topic, first 3 seconds or first line, format, call to action, metric, owner.
+4. No more than one call to action per publication.
+5. After a week keep the three best topics by the metric and replace the three weakest.
+Reviews, cases and numbers only real and with permission.
 
-1. Уточни цель периода (узнаваемость, заявки, удержание) и одну целевую группу.
-2. Выпиши пять болей и пять желаний клиента его словами. Источник: интервью, отзывы, переписки.
-3. Таблица на 14 дней: дата, площадка, тема, первые 3 секунды или первая строка, формат, призыв, метрика, ответственный.
-4. Не больше одного призыва в публикации.
-5. Через неделю оставь три лучшие темы по метрике и замени три слабые.
-
-Отзывы, кейсы и цифры только настоящие и с разрешения.
+Answer in the user's language.

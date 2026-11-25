@@ -1,0 +1,13 @@
+{
+  "checked": "25 November 2026",
+  "packs": [
+    { "name": "Anthropic Skills", "repo": "anthropics/skills", "stars": "200k", "license": "terms in each folder", "what": "Documents, spreadsheets, presentations, PDF, interface design, building skills and MCP servers.", "roles": "all roles", "install": "npx skills add anthropics/skills" },
+    { "name": "Knowledge Work Plugins", "repo": "anthropics/knowledge-work-plugins", "stars": "36k", "license": "Apache-2.0", "what": "Sales, marketing, finance, legal, HR, operations, support, product, data.", "roles": "CRO, CMO, CFO, Legal, HR, COO", "install": "claude plugin marketplace add anthropics/knowledge-work-plugins" },
+    { "name": "Marketing Skills", "repo": "coreyhaines31/marketingskills", "stars": "62k", "license": "MIT", "what": "Conversion, copy, SEO, analytics, ads and growth.", "roles": "CMO, Content, CRO", "install": "npx skills add coreyhaines31/marketingskills" },
+    { "name": "Superpowers", "repo": "obra/superpowers", "stars": "326k", "license": "MIT", "what": "A development routine: plans, tests before code, debugging, verification before delivery.", "roles": "CTO, CPO", "install": "npx skills add obra/superpowers" },
+    { "name": "Matt Pocock Skills", "repo": "mattpocock/skills", "stars": "332k", "license": "MIT", "what": "Engineering skills: questioning until clear, specs, tickets, debugging, handover.", "roles": "CTO, CPO, Orchestrator", "install": "npx skills add mattpocock/skills" },
+    { "name": "UI UX Pro Max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "stars": "153k", "license": "MIT", "what": "Choosing styles, palettes, fonts and interface rules.", "roles": "CPO, Content", "install": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill" },
+    { "name": "Vercel Agent Skills", "repo": "vercel-labs/agent-skills", "stars": "34k", "license": "terms in the repository", "what": "React and Next.js practices and web interface review.", "roles": "CTO", "install": "npx skills add vercel-labs/agent-skills" },
+    { "name": "HyperFrames", "repo": "heygen-com/hyperframes", "stars": "89k", "license": "Apache-2.0", "what": "Video editing and assembly together with Claude.", "roles": "Content", "install": "npx skills add heygen-com/hyperframes" }
+  ]
+}

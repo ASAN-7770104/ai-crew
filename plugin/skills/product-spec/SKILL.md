@@ -1,19 +1,19 @@
 ---
 name: product-spec
-description: "Короткое требование к функции: проблема, пользователь, поведение, критерии приёмки и метрика. Использовать перед разработкой."
+description: "A short feature spec: problem, user, behaviour, acceptance criteria and metric. Use before development. Короткое требование к функции: проблема, пользователь, поведение, критерии приёмки и метрика."
 ---
 
-# Требование к функции
-
+# Feature spec
 ```
-Проблема: чья и чем подтверждена
-Пользователь и ситуация
-Что должно происходить: сценарий по шагам
-Что не входит
-Критерии приёмки: проверяемые «если, то»
-Пустые, ошибочные и крайние случаи
-Метрика успеха и срок проверки
-Открытые вопросы
+Problem: whose, and what confirms it
+User and situation
+What should happen: the scenario step by step
+Out of scope
+Acceptance criteria: checkable "if, then"
+Empty, error and edge cases
+Success metric and when to check it
+Open questions
 ```
+If the problem is not confirmed, first write how to test it more cheaply than by building.
 
-Если проблема не подтверждена, сначала напиши, как проверить её дешевле разработки.
+Answer in the user's language.
