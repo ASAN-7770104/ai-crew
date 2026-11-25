@@ -1,14 +1,14 @@
 ---
 name: weekly-review
-description: "Еженедельный разбор: цифры против целей, что сработало, что мешает и план на следующую неделю. Использовать в конце недели."
+description: "A weekly review: numbers against goals, what worked, what blocks and the plan for next week. Use at the end of the week. Еженедельный разбор: цифры против целей, что сработало, что мешает и план на следующую неделю."
 ---
 
-# Разбор недели
+# Weekly review
+1. Take the goals from `company/COMPANY.md` and the numbers for the week. Every number has a source and a date.
+2. Table: metric, goal, actual, gap, one-line explanation.
+3. Three conclusions: what to continue, what to stop, what to test.
+4. Plan: no more than three priorities, each with one owner and a deadline.
+5. Save to `company/weekly/YYYY-MM-DD.md`.
+Mark a missing number "no data" instead of estimating it by eye.
 
-1. Возьми цели из `company/COMPANY.md` и цифры за неделю. У каждой цифры источник и дата.
-2. Таблица: метрика, цель, факт, отклонение, объяснение одной строкой.
-3. Три вывода: что продолжать, что прекратить, что проверить.
-4. План: не больше трёх приоритетов, у каждого один ответственный и срок.
-5. Сохрани в `company/weekly/ГГГГ-ММ-ДД.md`.
-
-Отсутствующую цифру помечай «нет данных», а не оценивай на глаз.
+Answer in the user's language.

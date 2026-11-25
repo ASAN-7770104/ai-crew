@@ -1,17 +1,16 @@
 ---
 name: daily-brief
-description: "Короткая сводка дня: что горит, что сделать сегодня и кто кого ждёт. Использовать утром или по просьбе «что у меня сегодня»."
+description: "A short day summary: what is urgent, what to do today and who waits for whom. Use in the morning or when asked 'what is on today'. Короткая сводка дня: что горит, что сделать сегодня и кто кого ждёт."
 ---
 
-# Сводка дня
+# Day summary
+1. Read `company/COMPANY.md`, `company/board.md` and your role's files.
+2. Check the connected sources (calendar, tasks, CRM), read only.
+3. Output no more than one page:
+- **Urgent:** overdue or blocking others. Task, owner, how late.
+- **Three things for today:** each with a result that shows it is done.
+- **Waiting:** on whom and for what.
+- **Meetings:** time and what to prepare.
+If data is missing, say what is missing. Do not invent tasks to fill space.
 
-1. Прочитай `company/COMPANY.md`, `company/board.md` и файлы своей роли.
-2. Проверь подключённые источники (календарь, задачи, CRM), только чтение.
-3. Выведи не больше одной страницы:
-
-- **Горит:** просрочено или блокирует других. Задача, ответственный, на сколько опоздали.
-- **Три дела на сегодня:** с результатом, по которому видно, что сделано.
-- **Ждём:** от кого и что.
-- **Встречи:** время и что подготовить.
-
-Если данных нет, напиши, чего не хватает. Не придумывай задачи ради заполнения.
+Answer in the user's language.

@@ -1,16 +1,16 @@
 ---
 name: release-check
-description: "Проверка перед выкладкой: тесты, данные, секреты, откат и наблюдение. Использовать перед релизом."
+description: "A check before deployment: tests, data, secrets, rollback and monitoring. Use before a release. Проверка перед выкладкой: тесты, данные, секреты, откат и наблюдение."
 ---
 
-# Проверка релиза
+# Release check
+- [ ] Tests were run now, the result is attached.
+- [ ] Changes were reviewed; it is clear what and why.
+- [ ] No secrets or personal data in the code or history.
+- [ ] Data changes are reversible or there is a verified copy.
+- [ ] Rollback is described: commands and who runs them.
+- [ ] It is clear how to notice a failure in the first hour.
+- [ ] A person has explicitly approved the deployment.
+Mark an unchecked item "not checked"; do not tick it.
 
-- [ ] Тесты запущены сейчас, результат приложен.
-- [ ] Изменения просмотрены, понятно, что и зачем.
-- [ ] Секретов и личных данных нет в коде и истории.
-- [ ] Изменения данных обратимы или есть проверенная копия.
-- [ ] Описан откат: команды и кто выполняет.
-- [ ] Понятно, как заметить поломку в первый час.
-- [ ] Есть явное «да» человека на выкладку.
-
-Непроверенный пункт помечай «не проверено», галочку не ставь.
+Answer in the user's language.

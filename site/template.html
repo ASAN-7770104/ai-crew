@@ -51,6 +51,8 @@ button:disabled { opacity: .5; cursor: default }
 .nav .links a:hover { background: var(--panel) }
 .nav .links a[aria-current="true"] { background: var(--ink); color: var(--bg) }
 .nav .go { justify-self: end }
+.nav .end { justify-self: end; display: flex; align-items: center; gap: 8px }
+.nav .end > * { pointer-events: auto }
 .nav .burger { display: none; justify-self: end; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: transparent }
 
 .hero { background: var(--night); color: var(--on-night); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 112px); padding-bottom: 40px; border-radius: 0 0 36px 36px }
@@ -162,6 +164,8 @@ dialog footer { padding: 14px 22px calc(14px + env(safe-area-inset-bottom, 0px))
   dialog { width: 100%; max-width: 100% }
   section.block { padding-top: 60px }
 }
+.nav .lang { min-height: 46px; padding: 0 16px; border: 0; background: var(--glass); backdrop-filter: blur(14px); color: var(--ink); font-weight: 700; }
+.nav.solid .lang { background: var(--panel); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } * { transition: none !important } }
 </style>
 
@@ -175,8 +179,11 @@ dialog footer { padding: 14px 22px calc(14px + env(safe-area-inset-bottom, 0px))
       <a href="#packs">Наборы навыков</a>
       <a href="#core">В комплекте</a>
     </div>
-    <a class="pill go" href="#team">Собрать команду<i aria-hidden="true">↗</i></a>
-    <button type="button" class="burger" id="burger" aria-expanded="false" aria-controls="links">Меню <span aria-hidden="true">☰</span></button>
+    <div class="end">
+  <button type="button" class="lang" id="lang">EN</button>
+      <a class="pill go" href="#team">Собрать команду<i aria-hidden="true">↗</i></a>
+      <button type="button" class="burger" id="burger" aria-expanded="false" aria-controls="links">Меню <span aria-hidden="true">☰</span></button>
+    </div>
   </div>
 </nav>
 
@@ -258,15 +265,25 @@ dialog footer { padding: 14px 22px calc(14px + env(safe-area-inset-bottom, 0px))
 
 <script>
 (() => {
-const DATA = "__CREW_DATA__";
+const ALL = "__CREW_DATA__";
+// Two languages: the address (?lang=en), then the saved choice, then the browser.
+const LANG = (() => {
+  let wanted;
+  try { wanted = new URLSearchParams(location.search).get('lang') || localStorage.getItem('crew-lang'); } catch { /* storage blocked */ }
+  if (wanted === 'ru' || wanted === 'en') return wanted;
+  return /^(ru|kk|be|uk)/i.test(navigator.language || '') ? 'ru' : 'en';
+})();
+const L = (ru, en) => (LANG === 'en' ? en : ru);
+const DATA = ALL[LANG];
+const PAGE = {"Разделы": "Sections", "Команда": "Team", "14 дней": "14 days", "Варианты внедрения": "Implementation", "Наборы навыков": "Skill packs", "В комплекте": "Included", "Собрать команду": "Build a team", "Меню": "Menu", "Роли на Claude: у каждой миссия, навыки, метрики и список того, что она делает только с вашего согласия. Соберите свою команду и получите план внедрения.": "Roles on Claude: each has a mission, skills, metrics and a list of what it does only with your approval. Build your team and get a rollout plan.", "Как внедрить": "How to implement", "Кто нужен вашему бизнесу": "Who your business needs", "Начните с готового набора по типу бизнеса, потом добавьте или уберите роли.": "Start with a ready set for your business type, then add or remove roles.", "Тип бизнеса": "Business type", "Ваша команда": "Your team", "Скопировать план внедрения": "Copy the rollout plan", "Скопировать установку": "Copy the install command", "Внедрение за 14 дней": "Rollout in 14 days", "День 1": "Day 1", "Знакомство": "Getting to know you", "Агент задаёт вопросы о компании и записывает ответы в один файл. Его читают все остальные.": "An agent asks about the company and writes the answers into one file that all the others read.", "Дни 2–4": "Days 2–4", "Подключения": "Connections", "Календарь, таблицы, CRM и диск. Сначала только на чтение.": "Calendar, sheets, CRM and drive. Read only at first.", "Дни 5–10": "Days 5–10", "Под присмотром": "Supervised", "Агенты готовят черновики и расчёты. Отправляет, платит и публикует человек.": "Agents prepare drafts and calculations. A person sends, pays and publishes.", "Дни 11–14": "Days 11–14", "Разбор": "Review", "Смотрим метрики, убираем лишние роли и закрепляем то, что сработало.": "Check the metrics, drop extra roles and keep what worked.", "От получаса без техники до своего продукта. Выберите вариант и идите по шагам.": "From half an hour with no tech to your own product. Pick an option and follow the steps.", "Вариант внедрения": "Implementation option", "Популярные наборы навыков": "Popular skill packs", "Базовые навыки в комплекте": "Core skills included", "Готовые порядки действий, которые агенты используют сами. Нажмите, чтобы прочитать.": "Ready procedures the agents use on their own. Tap to read.", "Начните с трёх ролей": "Start with three roles", "Агенты готовят материалы и расчёты, решения принимает человек. Они не заменяют юриста, бухгалтера и финансового советника. Сторонние наборы навыков принадлежат своим авторам и ставятся отдельно: перед установкой читайте, что они делают.": "Agents prepare materials and calculations; people decide. They do not replace a lawyer, an accountant or a financial adviser. Third-party skill packs belong to their authors and are installed separately: read what they do first."};
 const REPO = 'ASAN-7770104/ai-crew';
 const PRESETS = [
-  ['agency', 'Агентство', ['orchestrator', 'ceo', 'cro', 'cmo', 'content', 'delivery', 'cfo']],
-  ['school', 'Онлайн-школа', ['orchestrator', 'ceo', 'cmo', 'content', 'cro', 'delivery', 'cpo']],
-  ['shop', 'Интернет-магазин', ['orchestrator', 'cmo', 'content', 'cfo', 'coo', 'delivery']],
-  ['saas', 'IT-продукт', ['orchestrator', 'ceo', 'cpo', 'cto', 'cmo', 'cro', 'cfo']],
-  ['local', 'Услуги и салоны', ['orchestrator', 'coo', 'cro', 'content', 'cfo', 'hr']],
-  ['all', 'Все роли', DATA.roles.map((r) => r.id)],
+  ['agency', L('Агентство', 'Agency'), ['orchestrator', 'ceo', 'cro', 'cmo', 'content', 'delivery', 'cfo']],
+  ['school', L('Онлайн-школа', 'Online school'), ['orchestrator', 'ceo', 'cmo', 'content', 'cro', 'delivery', 'cpo']],
+  ['shop', L('Интернет-магазин', 'Online shop'), ['orchestrator', 'cmo', 'content', 'cfo', 'coo', 'delivery']],
+  ['saas', L('IT-продукт', 'IT product'), ['orchestrator', 'ceo', 'cpo', 'cto', 'cmo', 'cro', 'cfo']],
+  ['local', L('Услуги и салоны', 'Services and salons'), ['orchestrator', 'coo', 'cro', 'content', 'cfo', 'hr']],
+  ['all', L('Все роли', 'All roles'), DATA.roles.map((r) => r.id)],
 ];
 const byId = Object.fromEntries(DATA.roles.map((r) => [r.id, r]));
 const $ = (s) => document.querySelector(s);
@@ -309,7 +326,7 @@ function toast(text) {
 }
 function copy(text, done) {
   const fallback = () => {
-    openSheet('Скопируйте вручную', 'Браузер не дал скопировать сам', [h('pre', { tabindex: '0' }, text)]);
+    openSheet(L('Скопируйте вручную', 'Copy by hand'), L('Браузер не дал скопировать сам', 'The browser did not allow copying'), [h('pre', { tabindex: '0' }, text)]);
     const range = document.createRange();
     range.selectNodeContents($('#sheet pre'));
     getSelection().removeAllRanges();
@@ -321,27 +338,27 @@ function copy(text, done) {
 
 const team = () => DATA.roles.filter((r) => picked.has(r.id));
 const unique = (key) => [...new Set(team().flatMap((r) => r[key]))];
-const plural = (n, one, few, many) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
+const plural = (n, one, few, many) => n + ' ' + (LANG === 'en' ? (n === 1 ? one : many) : n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
 const installText = () => '/plugin marketplace add ' + REPO + '\n/plugin install ai-crew@ai-crew\n/ai-crew:company-setup';
 function planText() {
   const t = team();
   const way = DATA.options.find((o) => o.id === option);
   const block = (title, items) => title + '\n' + items.map((i) => '- ' + i).join('\n');
   return [
-    'План внедрения AI Crew',
-    block('Команда:', t.map((r) => r.name + ': ' + r.title.toLowerCase())),
-    block('Вариант внедрения: ' + way.name + ' (' + way.effort + ')', way.steps),
-    block('Дни 2–4. Подключить, сначала только чтение:', unique('connectors')),
-    block('Дни 5–10. Каждой роли дать первую задачу:', t.map((r) => r.name + ': ' + r.outputs[0])),
-    block('Только после согласия человека:', unique('approvals')),
-    block('Дни 11–14. Смотрим метрики:', t.map((r) => r.name + ': ' + r.kpis.join(', '))),
+    L('План внедрения AI Crew', 'AI Crew rollout plan'),
+    block(L('Команда:', 'Team:'), t.map((r) => r.name + ': ' + r.title.toLowerCase())),
+    block(L('Вариант внедрения: ', 'Implementation option: ') + way.name + ' (' + way.effort + ')', way.steps),
+    block(L('Дни 2–4. Подключить, сначала только чтение:', 'Days 2–4. Connect, read only at first:'), unique('connectors')),
+    block(L('Дни 5–10. Каждой роли дать первую задачу:', 'Days 5–10. Give every role a first task:'), t.map((r) => r.name + ': ' + r.outputs[0])),
+    block(L('Только после согласия человека:', 'Only after a person\'s approval:'), unique('approvals')),
+    block(L('Дни 11–14. Смотрим метрики:', 'Days 11–14. Check the metrics:'), t.map((r) => r.name + ': ' + r.kpis.join(', '))),
   ].join('\n\n');
 }
 
 function openSheet(title, subtitle, body, footer) {
   const sheet = $('#sheet');
   sheet.replaceChildren(
-    h('header', null, h('div', null, h('h3', { id: 'sheet-title' }, title), h('p', { class: 'sub' }, subtitle)), h('button', { type: 'button', onclick: () => sheet.close() }, 'Закрыть')),
+    h('header', null, h('div', null, h('h3', { id: 'sheet-title' }, title), h('p', { class: 'sub' }, subtitle)), h('button', { type: 'button', onclick: () => sheet.close() }, L('Закрыть', 'Close'))),
     h('div', { class: 'body' }, body), footer ? h('footer', null, footer) : '');
   if (!sheet.open) sheet.showModal();
 }
@@ -350,11 +367,11 @@ const tags = (title, items) => h('div', null, h('h4', null, title), items.map((i
 function openRole(r) {
   openSheet(r.name, r.title, [
     h('p', null, r.mission),
-    listBlock('Отвечает за', r.owns), listBlock('Что отдаёт', r.outputs), listBlock('Метрики', r.kpis),
-    tags('Базовые навыки', r.skills), tags('Популярные дополнения, ставятся отдельно', r.addons),
-    listBlock('Только с вашего «да»', r.approvals), listBlock('Никогда', r.never),
-    h('div', null, h('h4', null, 'Инструкция агента'), h('pre', null, r.prompt)),
-  ], h('button', { type: 'button', class: 'pill', onclick: () => copy(r.prompt, 'Инструкция скопирована') }, 'Скопировать инструкцию агента', arrow()));
+    listBlock(L('Отвечает за', 'Responsible for'), r.owns), listBlock(L('Что отдаёт', 'Delivers'), r.outputs), listBlock(L('Метрики', 'Metrics'), r.kpis),
+    tags(L('Базовые навыки', 'Core skills'), r.skills), tags(L('Популярные дополнения, ставятся отдельно', 'Popular add-ons, installed separately'), r.addons),
+    listBlock(L('Только с вашего «да»', 'Only with your yes'), r.approvals), listBlock(L('Никогда', 'Never'), r.never),
+    h('div', null, h('h4', null, L('Инструкция агента', 'Agent instruction')), h('pre', null, r.prompt)),
+  ], h('button', { type: 'button', class: 'pill', onclick: () => copy(r.prompt, L('Инструкция скопирована', 'Instruction copied')) }, L('Скопировать инструкцию агента', 'Copy the agent instruction'), arrow()));
 }
 
 function toggle(id) {
@@ -395,9 +412,9 @@ function paintChart() {
   });
   nodes.push(node(boss, (width - cw) / 2, 10, 'boss'));
   const focused = document.activeElement?.closest?.('#chart g.node')?.getAttribute('aria-label');
-  $('#chart').replaceChildren(s('svg', { viewBox: '0 0 ' + width + ' ' + height, role: 'group', 'aria-label': 'Схема команды' }, links, nodes));
+  $('#chart').replaceChildren(s('svg', { viewBox: '0 0 ' + width + ' ' + height, role: 'group', 'aria-label': L('Схема команды', 'Team diagram') }, links, nodes));
   if (focused) [...document.querySelectorAll('#chart g.node')].find((g) => g.getAttribute('aria-label') === focused)?.focus();
-  $('#chart-note').textContent = 'Нажмите на роль, чтобы добавить или убрать. Выбрано: ' + picked.size + ' из ' + DATA.roles.length;
+  $('#chart-note').textContent = L('Нажмите на роль, чтобы добавить или убрать. Выбрано: ', 'Tap a role to add or remove it. Selected: ') + picked.size + L(' из ', ' of ') + DATA.roles.length;
 }
 
 function paintOption() {
@@ -405,7 +422,7 @@ function paintOption() {
   $('#option-tabs').replaceChildren(...DATA.options.map((o) => h('button', { type: 'button', role: 'tab', id: 'tab-' + o.id, 'aria-selected': String(o.id === option), onclick: () => { option = o.id; paintOption(); $('#tab-' + o.id).focus(); } }, o.name)));
   const fact = (term, value) => h('div', null, h('dt', null, term), h('dd', null, value));
   $('#option').replaceChildren(h('div', { class: 'option' },
-    h('div', null, h('h3', null, way.name), h('dl', null, fact('Кому подходит', way.who), fact('Сколько времени', way.effort), fact('Что нужно', way.need), fact('Ограничение', way.limit))),
+    h('div', null, h('h3', null, way.name), h('dl', null, fact(L('Кому подходит', 'Who it suits'), way.who), fact(L('Сколько времени', 'How long'), way.effort), fact(L('Что нужно', 'What you need'), way.need), fact(L('Ограничение', 'Limitation'), way.limit))),
     h('ol', null, way.steps.map((step) => h('li', null, h('span', null, step))))));
 }
 
@@ -419,28 +436,52 @@ function paint() {
     return h('article', { class: 'role' + (on ? ' on' : '') },
       h('h3', null, r.name),
       h('p', null, r.title),
-      h('span', { class: 'meta' }, plural(r.skills.length, 'навык', 'навыка', 'навыков') + ' + ' + plural(r.addons.length, 'дополнение', 'дополнения', 'дополнений')),
-      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'add', 'aria-pressed': String(on), onclick: () => toggle(r.id) }, on ? 'В команде' : 'Добавить'),
-        h('button', { type: 'button', class: 'round', 'aria-label': 'Подробнее: ' + r.name, title: 'Подробнее', onclick: () => openRole(r) }, '→')));
+      h('span', { class: 'meta' }, plural(r.skills.length, L('навык', 'skill'), L('навыка', 'skills'), L('навыков', 'skills')) + ' + ' + plural(r.addons.length, L('дополнение', 'add-on'), L('дополнения', 'add-ons'), L('дополнений', 'add-ons'))),
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'add', 'aria-pressed': String(on), onclick: () => toggle(r.id) }, on ? L('В команде', 'In the team') : L('Добавить', 'Add')),
+        h('button', { type: 'button', class: 'round', 'aria-label': L('Подробнее: ', 'Details: ') + r.name, title: L('Подробнее', 'Details'), onclick: () => openRole(r) }, '→')));
   })))));
   const t = team();
-  $('#crew-sub').textContent = t.length ? plural(t.length, 'агент', 'агента', 'агентов') + ', ' + plural(unique('skills').length, 'базовый навык', 'базовых навыка', 'базовых навыков') : 'Выберите хотя бы одну роль';
+  $('#crew-sub').textContent = t.length ? plural(t.length, L('агент', 'agent'), L('агента', 'agents'), L('агентов', 'agents')) + ', ' + plural(unique('skills').length, L('базовый навык', 'core skill'), L('базовых навыка', 'core skills'), L('базовых навыков', 'core skills')) : L('Выберите хотя бы одну роль', 'Choose at least one role');
   $('#copy-plan').disabled = !t.length;
   $('#crew').replaceChildren(...(t.length ? [
-    tags('Состав', t.map((r) => r.name)),
-    h('div', null, h('h4', null, 'Установка в Claude Code'), h('pre', null, installText())),
-    listBlock('Что подключить', unique('connectors')),
-    listBlock('Останется за человеком', unique('approvals')),
-  ] : [h('p', null, 'Нажмите на роль в схеме или выберите тип бизнеса.')]));
+    tags(L('Состав', 'Members'), t.map((r) => r.name)),
+    h('div', null, h('h4', null, L('Установка в Claude Code', 'Install in Claude Code')), h('pre', null, installText())),
+    listBlock(L('Что подключить', 'What to connect'), unique('connectors')),
+    listBlock(L('Останется за человеком', 'Stays with a person'), unique('approvals')),
+  ] : [h('p', null, L('Нажмите на роль в схеме или выберите тип бизнеса.', 'Tap a role in the diagram or choose a business type.'))]));
 }
 
-$('#numbers').replaceChildren(...[[DATA.roles.length, 'агентов по ролям'], [DATA.skills.length, 'навыков в комплекте'], [DATA.options.length, 'вариантов внедрения']].map(([n, label]) => h('div', null, h('b', null, String(n)), h('span', null, label))));
-$('#packs-note').textContent = 'Самые заметные открытые наборы по звёздам GitHub на ' + DATA.ecosystem.checked + '. Это чужие проекты: прочитайте, что они делают, и ставьте только нужные.';
+$('#numbers').replaceChildren(...[[DATA.roles.length, L('агентов по ролям', 'role agents')], [DATA.skills.length, L('навыков в комплекте', 'skills included')], [DATA.options.length, L('вариантов внедрения', 'ways to implement')]].map(([n, label]) => h('div', null, h('b', null, String(n)), h('span', null, label))));
+$('#packs-note').textContent = L('Самые заметные открытые наборы по звёздам GitHub на ', 'The most prominent open packs by GitHub stars as of ') + DATA.ecosystem.checked + L('. Это чужие проекты: прочитайте, что они делают, и ставьте только нужные.', '. These are other people’s projects: read what they do and install only what you need.');
 $('#pack-list').replaceChildren(...DATA.ecosystem.packs.map((p) => h('article', { class: 'pack' },
-  h('span', { class: 'stars' }, '★ ' + p.stars), h('h3', null, p.name), h('p', null, p.what), h('small', null, 'Для: ' + p.roles + ' · ' + p.license),
-  h('div', { class: 'actions' }, h('button', { type: 'button', onclick: () => copy(p.install, 'Команда скопирована') }, 'Скопировать установку'),
+  h('span', { class: 'stars' }, '★ ' + p.stars), h('h3', null, p.name), h('p', null, p.what), h('small', null, L('Для: ', 'For: ') + p.roles + ' · ' + p.license),
+  h('div', { class: 'actions' }, h('button', { type: 'button', onclick: () => copy(p.install, L('Команда скопирована', 'Command copied')) }, L('Скопировать установку', 'Copy the install command')),
     h('a', { href: 'https://github.com/' + p.repo, target: '_blank', rel: 'noopener' }, 'GitHub ↗')))));
-$('#skills').replaceChildren(...DATA.skills.map((k) => h('button', { type: 'button', onclick: () => openSheet(k.id, k.description, [h('pre', null, k.body)], h('button', { type: 'button', class: 'pill', onclick: () => copy(k.body, 'Навык скопирован') }, 'Скопировать навык', arrow())) }, h('code', null, k.id), h('span', null, k.description))));
+$('#skills').replaceChildren(...DATA.skills.map((k) => h('button', { type: 'button', onclick: () => openSheet(k.id, k.description, [h('pre', null, k.body)], h('button', { type: 'button', class: 'pill', onclick: () => copy(k.body, L('Навык скопирован', 'Skill copied')) }, L('Скопировать навык', 'Copy the skill'), arrow())) }, h('code', null, k.id), h('span', null, k.description))));
+
+// The page is written in Russian; for English the same text gets its translation.
+function translate() {
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const key = node.nodeValue.trim();
+    if (PAGE[key]) node.nodeValue = node.nodeValue.replace(key, PAGE[key]);
+  }
+  for (const element of document.querySelectorAll('[aria-label]')) {
+    const next = PAGE[element.getAttribute('aria-label')];
+    if (next) element.setAttribute('aria-label', next);
+  }
+  document.querySelector('h1').innerHTML = 'A team of <em>AI agents</em> for business';
+}
+document.documentElement.lang = LANG;
+const switcher = $('#lang');
+switcher.textContent = L('EN', 'RU');
+switcher.addEventListener('click', () => {
+  const next = L('en', 'ru');
+  try { localStorage.setItem('crew-lang', next); } catch { /* the address carries the choice */ }
+  const url = new URL(location.href);
+  url.searchParams.set('lang', next);
+  location.replace(url);
+});
 
 // Navigation: scrolling by script also works where the page is embedded.
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -462,9 +503,10 @@ function markSection() {
 }
 addEventListener('scroll', markSection, { passive: true });
 $('#to-options').addEventListener('click', () => go('options'));
-$('#copy-plan').addEventListener('click', () => copy(planText(), 'План внедрения скопирован'));
-$('#copy-install').addEventListener('click', () => copy(installText(), 'Команды установки скопированы'));
+$('#copy-plan').addEventListener('click', () => copy(planText(), L('План внедрения скопирован', 'Rollout plan copied')));
+$('#copy-install').addEventListener('click', () => copy(installText(), L('Команды установки скопированы', 'Install commands copied')));
 matchMedia('(max-width: 560px)').addEventListener('change', paintChart);
+if (LANG === 'en') translate();
 paint();
 paintOption();
 markSection();
