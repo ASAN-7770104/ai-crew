@@ -1,0 +1,355 @@
+<title>AI Crew</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a live org chart is the hero, then the roster next to a sticky "your crew" panel. */
+:root {
+  color-scheme: light;
+  --bg: #eff1f6; --card: #ffffff; --ink: #11142a; --muted: #565c78; --faint: #868ca6; --line: #dde0ea;
+  --hero: #12163a; --hero-ink: #f3f4ff; --hero-muted: #a9afd8; --hero-line: #343a74;
+  --signal: #ff5b2e; --signal-ink: #1d0800;
+  --violet: #6c4fe0; --teal: #0b8576; --orange: #cf4f12; --blue: #1d62d6; --green: #2c7d2f; --pink: #c2307a;
+  --display: "Bricolage Grotesque", system-ui, sans-serif; --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { color-scheme: dark; --bg: #0b0d1c; --card: #14172c; --ink: #eceefa; --muted: #a5aac8; --faint: #747a9c; --line: #272b4a;
+    --hero: #151a45; --violet: #a791ff; --teal: #46cdb9; --orange: #ff9257; --blue: #78a8ff; --green: #79cf6f; --pink: #ff79b8 }
+}
+:root[data-theme="dark"] { color-scheme: dark; --bg: #0b0d1c; --card: #14172c; --ink: #eceefa; --muted: #a5aac8; --faint: #747a9c; --line: #272b4a;
+  --hero: #151a45; --violet: #a791ff; --teal: #46cdb9; --orange: #ff9257; --blue: #78a8ff; --green: #79cf6f; --pink: #ff79b8 }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body) }
+h1, h2, h3, p, ul { margin: 0 }
+h1 { font: 800 clamp(34px, 4.4vw, 54px)/1.06 var(--display); letter-spacing: -.025em; text-wrap: balance }
+h2 { font: 800 clamp(24px, 3vw, 32px)/1.15 var(--display); letter-spacing: -.015em; text-wrap: balance }
+h3 { font: 600 18px/1.25 var(--display) }
+button { font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 8px 14px; font-weight: 600; min-height: 38px }
+button:hover { border-color: var(--faint) }
+button.cta { background: var(--signal); border-color: var(--signal); color: var(--signal-ink) }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px }
+a { color: inherit }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)) }
+
+.hero { background: var(--hero); color: var(--hero-ink); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px) }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 36px; align-items: center; padding-block: 52px 56px }
+.hero .logo { font: 800 15px var(--display); display: flex; gap: 8px; align-items: center; margin-bottom: 26px }
+.hero .logo i { width: 12px; height: 12px; border-radius: 3px; background: var(--signal) }
+.hero p.lead { color: var(--hero-muted); font-size: 17px; margin-top: 18px; max-width: 46ch }
+.hero .row { margin-top: 26px }
+.hero button.line { background: transparent; border-color: var(--hero-line); color: var(--hero-ink) }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
+
+.chart { position: relative; min-width: 0 }
+.chart svg { display: block; width: 100%; height: auto }
+.chart .link { stroke: var(--hero-line); stroke-width: 1.5; fill: none }
+.chart .link.on { stroke: var(--signal); stroke-width: 2 }
+.chart g.node { cursor: pointer }
+.chart g.node rect { fill: transparent; stroke: var(--hero-line); stroke-width: 1.5 }
+.chart g.node text { fill: var(--hero-muted); font: 600 13px var(--body) }
+.chart g.node.on rect { fill: var(--hero-ink); stroke: var(--hero-ink) }
+.chart g.node.on text { fill: #12163a }
+.chart g.node:focus-visible rect { stroke: var(--signal); stroke-width: 3 }
+.chart g.boss rect { fill: var(--signal); stroke: var(--signal) }
+.chart g.boss text { fill: var(--signal-ink); font-weight: 600 }
+.chart figcaption { color: var(--hero-muted); font: 500 12px var(--mono); margin-top: 10px; text-align: center }
+figure { margin: 0 }
+
+section.block { padding-block: 44px 0 }
+.sub { color: var(--muted); margin-top: 6px; max-width: 62ch }
+.presets { margin-top: 18px }
+.presets button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; margin-top: 22px }
+.group { margin-bottom: 22px }
+.group > p { font: 500 12px var(--mono); color: var(--faint); margin-bottom: 8px }
+.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px }
+.role { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; --c: var(--violet) }
+.role.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c) }
+.c-violet { --c: var(--violet) } .c-teal { --c: var(--teal) } .c-orange { --c: var(--orange) } .c-blue { --c: var(--blue) } .c-green { --c: var(--green) } .c-pink { --c: var(--pink) }
+.role .top { display: flex; justify-content: space-between; gap: 8px; align-items: center }
+.role h3 { color: var(--c) }
+.role p { color: var(--muted); font-size: 14px }
+.role .meta { font: 400 12px var(--mono); color: var(--faint); margin-top: auto }
+.role .row button { flex: 1 }
+.role button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: var(--card) }
+
+aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 14px); background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 0 }
+aside header { padding: 16px; border-bottom: 1px solid var(--line) }
+aside .body { padding: 16px; display: flex; flex-direction: column; gap: 16px; max-height: 62vh; overflow: auto }
+aside h4 { margin: 0 0 6px; font: 500 12px var(--mono); color: var(--faint) }
+aside ul { padding-left: 18px; font-size: 14px }
+.pill { display: inline-block; font: 500 12px var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; margin: 0 4px 4px 0 }
+pre { margin: 0; font: 400 12.5px/1.55 var(--mono); background: var(--hero); color: var(--hero-ink); border-radius: 10px; padding: 12px; overflow-x: auto; white-space: pre }
+aside footer { padding: 14px 16px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap }
+aside footer button { flex: 1 }
+
+ol.steps { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink) }
+ol.steps li { padding: 14px 16px 0 0 }
+ol.steps b { display: block; font: 500 12px var(--mono); color: var(--signal); margin-bottom: 6px }
+ol.steps p { color: var(--muted); font-size: 14px; margin-top: 4px }
+.skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 22px; margin-top: 18px }
+.skills button { display: block; text-align: left; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; padding: 12px 0; font-weight: 400 }
+.skills code { font: 500 13px var(--mono); color: var(--ink); display: block; margin-bottom: 3px }
+.skills span { color: var(--muted); font-size: 13.5px }
+footer.page { padding-block: 48px 40px; color: var(--faint); font-size: 13px }
+
+dialog { border: 0; padding: 0; width: min(640px, 100%); height: 100%; max-height: 100%; margin: 0 0 0 auto; background: var(--card); color: var(--ink) }
+dialog[open] { display: flex; flex-direction: column }
+dialog::backdrop { background: rgb(8 9 24 / 55%) }
+dialog header { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: calc(18px + env(safe-area-inset-top, 0px)) 20px 14px; border-bottom: 1px solid var(--line) }
+dialog .body { padding: 18px 20px; overflow: auto; flex: 1; display: flex; flex-direction: column; gap: 16px }
+dialog h4 { margin: 0 0 6px; font: 500 12px var(--mono); color: var(--faint) }
+dialog ul { padding-left: 18px }
+dialog .body pre { white-space: pre-wrap; overflow-wrap: anywhere; flex: none }
+dialog footer { padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line) }
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); border-radius: 10px; padding: 9px 16px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; max-width: calc(100% - 32px); font-weight: 600 }
+#toast.show { opacity: 1 }
+
+@media (max-width: 940px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 36px 36px }
+  .layout { grid-template-columns: minmax(0, 1fr) }
+  aside { position: static }
+  aside .body { max-height: none }
+  ol.steps { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+}
+@media (max-width: 560px) {
+  ol.steps { grid-template-columns: minmax(0, 1fr) }
+  .chart g.node text { font-size: 19px }
+  dialog { width: 100%; max-width: 100% }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chart .link.on { stroke-dasharray: 6 6; animation: flow 1.4s linear infinite }
+  @keyframes flow { to { stroke-dashoffset: -24 } }
+}
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="logo"><i></i>AI Crew</div>
+      <h1>Команда ИИ‑агентов для вашего бизнеса</h1>
+      <p class="lead">Двенадцать ролей на Claude: у каждой миссия, навыки, метрики и список того, что она делает только с вашего согласия. Соберите свою команду и получите план внедрения.</p>
+      <div class="row">
+        <button type="button" class="cta" id="start">Собрать команду</button>
+        <button type="button" class="line" id="how-btn">Как внедряется</button>
+      </div>
+    </div>
+    <figure class="chart">
+      <div id="chart"></div>
+      <figcaption id="chart-note"></figcaption>
+    </figure>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="block" id="team">
+    <h2>Кто нужен вашему бизнесу</h2>
+    <p class="sub">Начните с готового набора по типу бизнеса, потом добавьте или уберите роли.</p>
+    <div class="row presets" id="presets" role="group" aria-label="Тип бизнеса"></div>
+    <div class="layout">
+      <div id="roster"></div>
+      <aside aria-label="Ваша команда">
+        <header><h3 id="crew-title">Ваша команда</h3><p class="sub" id="crew-sub"></p></header>
+        <div class="body" id="crew"></div>
+        <footer><button type="button" class="cta" id="copy-plan">Скопировать план внедрения</button><button type="button" id="copy-install">Скопировать установку</button></footer>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <h2>Внедрение за 14 дней</h2>
+    <ol class="steps">
+      <li><b>День 1</b><h3>Знакомство с компанией</h3><p>Агент задаёт вопросы и записывает ответы в один файл. Его читают все остальные.</p></li>
+      <li><b>Дни 2–4</b><h3>Подключения</h3><p>Календарь, таблицы, CRM и диск. Сначала только на чтение.</p></li>
+      <li><b>Дни 5–10</b><h3>Работа под присмотром</h3><p>Агенты готовят черновики и расчёты. Отправляет, платит и публикует человек.</p></li>
+      <li><b>Дни 11–14</b><h3>Разбор и регламенты</h3><p>Смотрим метрики, убираем лишние роли и закрепляем то, что сработало.</p></li>
+    </ol>
+  </section>
+
+  <section class="block">
+    <h2>Базовые навыки в комплекте</h2>
+    <p class="sub">Готовые порядки действий, которые агенты используют сами. Нажмите, чтобы прочитать.</p>
+    <div class="skills" id="skills"></div>
+  </section>
+
+  <footer class="page">Агенты готовят материалы и расчёты, решения принимает человек. Они не заменяют юриста, бухгалтера и финансового советника. Названия дополнительных навыков принадлежат их авторам и ставятся отдельно.</footer>
+</main>
+
+<dialog id="sheet" aria-labelledby="sheet-title"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+const DATA = "__CREW_DATA__";
+const REPO = 'ASAN-7770104/ai-crew';
+const PRESETS = [
+  ['agency', 'Агентство', ['orchestrator', 'ceo', 'cro', 'cmo', 'content', 'delivery', 'cfo']],
+  ['school', 'Онлайн-школа', ['orchestrator', 'ceo', 'cmo', 'content', 'cro', 'delivery', 'cpo']],
+  ['shop', 'Интернет-магазин', ['orchestrator', 'cmo', 'content', 'cfo', 'coo', 'delivery']],
+  ['saas', 'IT-продукт', ['orchestrator', 'ceo', 'cpo', 'cto', 'cmo', 'cro', 'cfo']],
+  ['local', 'Услуги и салоны', ['orchestrator', 'coo', 'cro', 'content', 'cfo', 'hr']],
+  ['all', 'Все роли', DATA.roles.map((r) => r.id)],
+];
+const byId = Object.fromEntries(DATA.roles.map((r) => [r.id, r]));
+const skillById = Object.fromEntries(DATA.skills.map((s) => [s.id, s]));
+const $ = (s) => document.querySelector(s);
+const store = {
+  get: () => { try { return JSON.parse(localStorage.getItem('crew') || 'null'); } catch { return null; } },
+  set: (v) => { try { localStorage.setItem('crew', JSON.stringify(v)); } catch { /* private mode */ } },
+};
+const saved = store.get();
+const picked = new Set(Array.isArray(saved) ? saved.filter((id) => byId[id]) : PRESETS[0][2]);
+
+function h(tag, props, ...children) {
+  const node = document.createElement(tag);
+  for (const [name, value] of Object.entries(props || {})) {
+    if (value === null || value === undefined || value === false) continue;
+    if (name.startsWith('on')) node.addEventListener(name.slice(2), value);
+    else if (name === 'class') node.className = value;
+    else node.setAttribute(name, value === true ? '' : value);
+  }
+  node.append(...children.flat(Infinity).filter((c) => c !== null && c !== undefined && c !== false));
+  return node;
+}
+function s(tag, props, ...children) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [name, value] of Object.entries(props || {})) {
+    if (name.startsWith('on')) node.addEventListener(name.slice(2), value); else node.setAttribute(name, value);
+  }
+  node.append(...children.flat());
+  return node;
+}
+function toast(text) {
+  const box = $('#toast');
+  box.textContent = text;
+  box.classList.add('show');
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => box.classList.remove('show'), 3200);
+}
+function copy(text, done) {
+  const fallback = () => {
+    openSheet('Скопируйте вручную', 'Браузер не дал скопировать сам', [h('pre', { tabindex: '0' }, text)]);
+    const range = document.createRange();
+    range.selectNodeContents($('#sheet pre'));
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+  };
+  if (!navigator.clipboard) { fallback(); return; }
+  navigator.clipboard.writeText(text).then(() => toast(done), fallback);
+}
+
+const team = () => DATA.roles.filter((r) => picked.has(r.id));
+const unique = (key) => [...new Set(team().flatMap((r) => r[key]))];
+const plural = (n, one, few, many) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
+const installText = () => '/plugin marketplace add ' + REPO + '\n/plugin install ai-crew@ai-crew\n/ai-crew:company-setup';
+function planText() {
+  const t = team();
+  const block = (title, items) => title + '\n' + items.map((i) => '- ' + i).join('\n');
+  return [
+    'План внедрения AI Crew',
+    block('Команда:', t.map((r) => r.name + ': ' + r.title.toLowerCase())),
+    'День 1. Установка и знакомство с компанией:\n' + installText(),
+    block('Дни 2–4. Подключить, сначала только чтение:', unique('connectors')),
+    block('Дни 5–10. Каждой роли дать первую задачу:', t.map((r) => r.name + ': ' + r.outputs[0])),
+    block('Только после согласия человека:', unique('approvals')),
+    block('Дни 11–14. Смотрим метрики:', t.map((r) => r.name + ': ' + r.kpis.join(', '))),
+  ].join('\n\n');
+}
+
+function openSheet(title, subtitle, body, footer) {
+  const sheet = $('#sheet');
+  sheet.replaceChildren(
+    h('header', null, h('div', null, h('h3', { id: 'sheet-title' }, title), h('p', { class: 'sub' }, subtitle)), h('button', { type: 'button', onclick: () => sheet.close() }, 'Закрыть')),
+    h('div', { class: 'body' }, body), footer ? h('footer', null, footer) : '');
+  if (!sheet.open) sheet.showModal();
+}
+const listBlock = (title, items) => h('div', null, h('h4', null, title), h('ul', null, items.map((i) => h('li', null, i))));
+function openRole(r) {
+  openSheet(r.name, r.title, [
+    h('p', null, r.mission),
+    listBlock('Отвечает за', r.owns), listBlock('Что отдаёт', r.outputs), listBlock('Метрики', r.kpis),
+    h('div', null, h('h4', null, 'Базовые навыки'), r.skills.map((id) => h('span', { class: 'pill' }, id))),
+    h('div', null, h('h4', null, 'Популярные дополнения, ставятся отдельно'), r.addons.map((a) => h('span', { class: 'pill' }, a))),
+    listBlock('Только с вашего «да»', r.approvals), listBlock('Никогда', r.never),
+    h('div', null, h('h4', null, 'Инструкция агента'), h('pre', null, r.prompt)),
+  ], h('button', { type: 'button', class: 'cta', onclick: () => copy(r.prompt, 'Инструкция скопирована. Вставьте её в проект Claude.') }, 'Скопировать инструкцию агента'));
+}
+
+function toggle(id) {
+  picked.has(id) ? picked.delete(id) : picked.add(id);
+  store.set([...picked]);
+  paint();
+}
+
+function paintChart() {
+  const boss = byId.orchestrator;
+  const others = DATA.roles.filter((r) => r.id !== boss.id);
+  const narrow = matchMedia('(max-width: 560px)').matches;
+  const cols = narrow ? 2 : 4;
+  const width = narrow ? 420 : 640;
+  const cw = narrow ? 190 : 138;
+  const ch = narrow ? 52 : 44;
+  const rowGap = narrow ? 70 : 78;
+  const height = 100 + Math.ceil(others.length / cols) * rowGap;
+  const gap = (width - cols * cw) / (cols + 1);
+  const links = [];
+  const nodes = [];
+  const node = (r, x, y, extra) => {
+    const on = picked.has(r.id);
+    return s('g', { class: 'node ' + (extra || '') + (on ? ' on' : ''), tabindex: '0', role: 'button', 'aria-pressed': String(on), 'aria-label': r.name,
+      onclick: () => toggle(r.id), onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(r.id); } } },
+    s('rect', { x, y, width: cw, height: ch, rx: '10' }), s('text', { x: x + cw / 2, y: y + ch / 2 + 5, 'text-anchor': 'middle' }, r.name));
+  };
+  others.forEach((r, i) => {
+    const x = gap + (i % cols) * (cw + gap);
+    const y = 100 + Math.floor(i / cols) * rowGap;
+    const mid = x + cw / 2;
+    const on = picked.has(r.id) && picked.has(boss.id);
+    // A trunk down the middle gap, then a branch above each row: lines never cross a role.
+    const bus = y - (rowGap - ch) / 2;
+    const path = s('path', { class: 'link' + (on ? ' on' : ''), d: 'M' + width / 2 + ' ' + (10 + ch) + ' V ' + bus + ' H ' + mid + ' V ' + y });
+    on ? links.push(path) : links.unshift(path);
+    nodes.push(node(r, x, y));
+  });
+  nodes.push(node(boss, (width - cw) / 2, 10, picked.has(boss.id) ? 'boss' : ''));
+  const focused = document.activeElement?.closest?.('#chart g.node')?.getAttribute('aria-label');
+  $('#chart').replaceChildren(s('svg', { viewBox: '0 0 ' + width + ' ' + height, role: 'group', 'aria-label': 'Схема команды' }, links, nodes));
+  if (focused) [...document.querySelectorAll('#chart g.node')].find((g) => g.getAttribute('aria-label') === focused)?.focus();
+  $('#chart-note').textContent = 'Нажмите на роль, чтобы добавить или убрать. Выбрано: ' + picked.size + ' из ' + DATA.roles.length;
+}
+
+function paint() {
+  paintChart();
+  const preset = PRESETS.find(([, , ids]) => ids.length === picked.size && ids.every((id) => picked.has(id)));
+  $('#presets').replaceChildren(...PRESETS.map(([id, label, ids]) => h('button', { type: 'button', 'aria-pressed': String(preset?.[0] === id), onclick: () => { picked.clear(); ids.forEach((x) => picked.add(x)); store.set([...picked]); paint(); } }, label)));
+  const groups = [...new Set(DATA.roles.map((r) => r.group))];
+  $('#roster').replaceChildren(...groups.map((g) => h('div', { class: 'group' }, h('p', null, g), h('div', { class: 'roster' }, DATA.roles.filter((r) => r.group === g).map((r) => {
+    const on = picked.has(r.id);
+    return h('article', { class: 'role c-' + r.color + (on ? ' on' : '') },
+      h('div', { class: 'top' }, h('h3', null, r.name)),
+      h('p', null, r.title),
+      h('span', { class: 'meta' }, plural(r.skills.length, 'навык', 'навыка', 'навыков') + ' + ' + plural(r.addons.length, 'дополнение', 'дополнения', 'дополнений')),
+      h('div', { class: 'row' }, h('button', { type: 'button', 'aria-pressed': String(on), onclick: () => toggle(r.id) }, on ? 'В команде' : 'Добавить'), h('button', { type: 'button', onclick: () => openRole(r) }, 'Подробнее')));
+  })))));
+  const t = team();
+  $('#crew-sub').textContent = t.length ? plural(t.length, 'агент', 'агента', 'агентов') + ', ' + plural(unique('skills').length, 'базовый навык', 'базовых навыка', 'базовых навыков') : 'Выберите хотя бы одну роль';
+  $('#copy-plan').disabled = !t.length;
+  $('#crew').replaceChildren(...(t.length ? [
+    h('div', null, h('h4', null, 'Состав'), t.map((r) => h('span', { class: 'pill c-' + r.color }, r.name))),
+    h('div', null, h('h4', null, 'Установка в Claude Code'), h('pre', null, installText())),
+    listBlock4('Что подключить', unique('connectors')),
+    listBlock4('Останется за человеком', unique('approvals')),
+  ] : [h('p', { class: 'sub' }, 'Нажмите на роль в схеме или выберите тип бизнеса.')]));
+}
+const listBlock4 = (title, items) => h('div', null, h('h4', null, title), h('ul', null, items.map((i) => h('li', null, i))));
+
+$('#skills').replaceChildren(...DATA.skills.map((k) => h('button', { type: 'button', onclick: () => openSheet(k.id, k.description, [h('pre', null, k.body)], h('button', { type: 'button', class: 'cta', onclick: () => copy(k.body, 'Навык скопирован') }, 'Скопировать навык')) }, h('code', null, k.id), h('span', null, k.description))));
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const go = (id) => $(id).scrollIntoView({ behavior: calm ? 'auto' : 'smooth' });
+$('#start').addEventListener('click', () => go('#team'));
+$('#how-btn').addEventListener('click', () => go('#how'));
+$('#copy-plan').addEventListener('click', () => copy(planText(), 'План внедрения скопирован'));
+$('#copy-install').addEventListener('click', () => copy(installText(), 'Команды установки скопированы'));
+matchMedia('(max-width: 560px)').addEventListener('change', paintChart);
+paint();
+})();
+</script>
