@@ -1,0 +1,9 @@
+{
+  "name": "ai-crew",
+  "version": "1.0.0",
+  "description": "A ready team of AI agents for a business: 12 roles, 14 core skills and human approval rules.",
+  "author": { "name": "Assanali Tursumbayev" },
+  "license": "MIT",
+  "repository": "https://github.com/ASAN-7770104/ai-crew",
+  "keywords": ["agents", "business", "skills", "ceo", "sales", "marketing", "finance"]
+}

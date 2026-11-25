@@ -1,0 +1,8 @@
+{
+  "name": "ai-crew",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": { "build": "node scripts/build.mjs", "test": "node --test" }
+}

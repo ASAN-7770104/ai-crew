@@ -1,0 +1,4 @@
+node_modules/
+company/
+*.log
+.env

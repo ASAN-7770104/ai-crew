@@ -1,0 +1,12 @@
+{
+  "name": "ai-crew",
+  "owner": { "name": "Assanali Tursumbayev" },
+  "description": "A ready team of AI agents for a business",
+  "plugins": [
+    {
+      "name": "ai-crew",
+      "source": "./plugin",
+      "description": "12 role agents and 14 core skills: orchestrator, CEO, CFO, legal, CMO, content, CRO, client success, COO, CPO, CTO and HR"
+    }
+  ]
+}
