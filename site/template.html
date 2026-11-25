@@ -1,112 +1,156 @@
 <title>AI Crew</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@800;900&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a live org chart is the hero, then the roster next to a sticky "your crew" panel. */
+/* Layout: floating pill navigation, a dark opening screen with condensed headlines, then light rounded panels. */
 :root {
   color-scheme: light;
-  --bg: #eff1f6; --card: #ffffff; --ink: #11142a; --muted: #565c78; --faint: #868ca6; --line: #dde0ea;
-  --hero: #12163a; --hero-ink: #f3f4ff; --hero-muted: #a9afd8; --hero-line: #343a74;
-  --signal: #ff5b2e; --signal-ink: #1d0800;
-  --violet: #6c4fe0; --teal: #0b8576; --orange: #cf4f12; --blue: #1d62d6; --green: #2c7d2f; --pink: #c2307a;
-  --display: "Bricolage Grotesque", system-ui, sans-serif; --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --bg: #ffffff; --panel: #f4f4f4; --card: #ffffff; --ink: #0d0d0d; --muted: #55585f; --faint: #85888f; --line: #e4e5e8;
+  --blue: #0069e8; --on-blue: #ffffff; --blue-soft: #e5f0ff; --red: #ff2a1f; --night: #0d0d0d; --on-night: #ffffff; --night-muted: #a9adb6; --night-line: #34363d;
+  --glass: rgb(255 255 255 / 78%); --display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif; --body: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; --bg: #0b0d1c; --card: #14172c; --ink: #eceefa; --muted: #a5aac8; --faint: #747a9c; --line: #272b4a;
-    --hero: #151a45; --violet: #a791ff; --teal: #46cdb9; --orange: #ff9257; --blue: #78a8ff; --green: #79cf6f; --pink: #ff79b8 }
+  :root:not([data-theme="light"]) { color-scheme: dark; --bg: #101113; --panel: #18191d; --card: #202227; --ink: #f4f5f7; --muted: #b0b3bc; --faint: #80848e; --line: #2e3036;
+    --blue: #4c9bff; --on-blue: #04152c; --blue-soft: #142a47; --night: #000000; --glass: rgb(24 25 29 / 78%) }
 }
-:root[data-theme="dark"] { color-scheme: dark; --bg: #0b0d1c; --card: #14172c; --ink: #eceefa; --muted: #a5aac8; --faint: #747a9c; --line: #272b4a;
-  --hero: #151a45; --violet: #a791ff; --teal: #46cdb9; --orange: #ff9257; --blue: #78a8ff; --green: #79cf6f; --pink: #ff79b8 }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #101113; --panel: #18191d; --card: #202227; --ink: #f4f5f7; --muted: #b0b3bc; --faint: #80848e; --line: #2e3036;
+  --blue: #4c9bff; --on-blue: #04152c; --blue-soft: #142a47; --night: #000000; --glass: rgb(24 25 29 / 78%) }
 * { box-sizing: border-box }
-body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body) }
-h1, h2, h3, p, ul { margin: 0 }
-h1 { font: 800 clamp(34px, 4.4vw, 54px)/1.06 var(--display); letter-spacing: -.025em; text-wrap: balance }
-h2 { font: 800 clamp(24px, 3vw, 32px)/1.15 var(--display); letter-spacing: -.015em; text-wrap: balance }
-h3 { font: 600 18px/1.25 var(--display) }
-button { font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 8px 14px; font-weight: 600; min-height: 38px }
-button:hover { border-color: var(--faint) }
-button.cta { background: var(--signal); border-color: var(--signal); color: var(--signal-ink) }
-:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px }
+html { scroll-behavior: smooth }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body) }
+h1, h2, h3, h4, p, ul, ol { margin: 0 }
+h1, h2 { font-family: var(--display); font-weight: 900; text-transform: uppercase; line-height: .92; text-wrap: balance }
+h1 { font-size: clamp(52px, 8.4vw, 112px) }
+h2 { font-size: clamp(38px, 5vw, 64px) }
+h3 { font: 800 28px/1 var(--display); text-transform: uppercase; letter-spacing: .005em }
+h4 { font: 500 12px var(--mono); color: var(--faint); margin-bottom: 6px }
 a { color: inherit }
-.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)) }
-
-.hero { background: var(--hero); color: var(--hero-ink); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px) }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 36px; align-items: center; padding-block: 52px 56px }
-.hero .logo { font: 800 15px var(--display); display: flex; gap: 8px; align-items: center; margin-bottom: 26px }
-.hero .logo i { width: 12px; height: 12px; border-radius: 3px; background: var(--signal) }
-.hero p.lead { color: var(--hero-muted); font-size: 17px; margin-top: 18px; max-width: 46ch }
-.hero .row { margin-top: 26px }
-.hero button.line { background: transparent; border-color: var(--hero-line); color: var(--hero-ink) }
+button { font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 16px; font-weight: 500; min-height: 40px; transition: background .15s, border-color .15s, color .15s }
+button:hover { border-color: var(--faint) }
+button:disabled { opacity: .5; cursor: default }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px }
+.pill { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--blue); border-color: var(--blue); color: var(--on-blue); padding: 5px 5px 5px 20px; min-height: 46px; font-weight: 600; text-decoration: none; border-radius: 999px; border-style: solid; border-width: 1px; cursor: pointer }
+.pill:hover { border-color: var(--on-blue) }
+.pill i { width: 34px; height: 34px; border-radius: 50%; background: #fff; color: #0d0d0d; display: grid; place-items: center; font-style: normal; flex: none }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)) }
 
-.chart { position: relative; min-width: 0 }
+/* navigation */
+.nav { position: fixed; z-index: 20; top: 0; left: 0; right: 0; padding-top: calc(env(safe-area-inset-top, 0px) + 12px); padding-bottom: 10px; pointer-events: none; border-bottom: 1px solid transparent; transition: background .2s, border-color .2s }
+/* Past the dark opening screen the pills sit on one solid bar, so page text never shows between them. */
+.nav.solid { background: var(--bg); border-bottom-color: var(--line); pointer-events: auto }
+.nav.solid .logo, .nav.solid .links, .nav.solid .burger { background: var(--panel) }
+.nav.solid .links a:hover { background: var(--card) }
+.nav.solid .links a[aria-current="true"]:hover { background: var(--ink) }
+.nav .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px }
+.nav .logo, .nav .links, .nav .go, .nav .burger { pointer-events: auto }
+.nav .logo { justify-self: start; display: inline-flex; align-items: center; gap: 9px; text-decoration: none; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 999px; padding: 6px 16px 6px 6px; font: 900 22px/1 var(--display); text-transform: uppercase; color: var(--ink) }
+.nav .logo b { width: 34px; height: 34px; border-radius: 11px; background: var(--blue); color: var(--on-blue); display: grid; place-items: center; font-size: 19px }
+.nav .links { display: flex; gap: 2px; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 999px; padding: 5px }
+.nav .links a { padding: 8px 15px; border-radius: 999px; text-decoration: none; font-weight: 500; font-size: 14px; white-space: nowrap }
+.nav .links a:hover { background: var(--panel) }
+.nav .links a[aria-current="true"] { background: var(--ink); color: var(--bg) }
+.nav .go { justify-self: end }
+.nav .burger { display: none; justify-self: end; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: transparent }
+
+.hero { background: var(--night); color: var(--on-night); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 112px); padding-bottom: 40px; border-radius: 0 0 36px 36px }
+.hero .grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 36px; align-items: end }
+.hero h1 em { font-style: normal; color: var(--red) }
+.hero .lead { color: var(--night-muted); font-size: 17px; margin: 20px 0 26px; max-width: 46ch }
+.hero button.line { background: transparent; border-color: var(--night-line); color: var(--on-night); min-height: 46px; padding-inline: 20px }
+.numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--night-line); margin-top: 40px }
+.numbers div { padding-top: 18px }
+.numbers b { display: block; font: 900 clamp(44px, 6vw, 80px)/1 var(--display); color: #4c9bff }
+.numbers span { color: var(--night-muted); font-size: 14px }
+.chart { min-width: 0; margin: 0 }
 .chart svg { display: block; width: 100%; height: auto }
-.chart .link { stroke: var(--hero-line); stroke-width: 1.5; fill: none }
-.chart .link.on { stroke: var(--signal); stroke-width: 2 }
+.chart .link { stroke: var(--night-line); stroke-width: 1.5; fill: none }
+.chart .link.on { stroke: var(--red); stroke-width: 2 }
 .chart g.node { cursor: pointer }
-.chart g.node rect { fill: transparent; stroke: var(--hero-line); stroke-width: 1.5 }
-.chart g.node text { fill: var(--hero-muted); font: 600 13px var(--body) }
-.chart g.node.on rect { fill: var(--hero-ink); stroke: var(--hero-ink) }
-.chart g.node.on text { fill: #12163a }
-.chart g.node:focus-visible rect { stroke: var(--signal); stroke-width: 3 }
-.chart g.boss rect { fill: var(--signal); stroke: var(--signal) }
-.chart g.boss text { fill: var(--signal-ink); font-weight: 600 }
-.chart figcaption { color: var(--hero-muted); font: 500 12px var(--mono); margin-top: 10px; text-align: center }
-figure { margin: 0 }
+.chart g.node rect { fill: transparent; stroke: var(--night-line); stroke-width: 1.5 }
+.chart g.node text { fill: var(--night-muted); font: 500 13px var(--body) }
+.chart g.node.on rect { fill: #fff; stroke: #fff }
+.chart g.node.on text { fill: #0d0d0d }
+.chart g.node.boss.on rect { fill: var(--red); stroke: var(--red) }
+.chart g.node.boss.on text { fill: #fff; font-weight: 600 }
+.chart g.node:focus-visible rect { stroke: #4c9bff; stroke-width: 3 }
+.chart figcaption { color: var(--night-muted); font: 400 12px var(--mono); margin-top: 10px; text-align: center }
 
-section.block { padding-block: 44px 0 }
-.sub { color: var(--muted); margin-top: 6px; max-width: 62ch }
-.presets { margin-top: 18px }
-.presets button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg) }
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; margin-top: 22px }
-.group { margin-bottom: 22px }
-.group > p { font: 500 12px var(--mono); color: var(--faint); margin-bottom: 8px }
-.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px }
-.role { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; --c: var(--violet) }
-.role.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c) }
-.c-violet { --c: var(--violet) } .c-teal { --c: var(--teal) } .c-orange { --c: var(--orange) } .c-blue { --c: var(--blue) } .c-green { --c: var(--green) } .c-pink { --c: var(--pink) }
-.role .top { display: flex; justify-content: space-between; gap: 8px; align-items: center }
-.role h3 { color: var(--c) }
+section.block { padding-block: 88px 0; scroll-margin-top: 20px }
+.sub { color: var(--muted); margin-top: 12px; max-width: 62ch; font-size: 16px }
+.tabs { margin-top: 24px }
+.tabs button[aria-pressed="true"], .tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 24px; align-items: start; margin-top: 26px }
+.group { margin-bottom: 26px }
+.group > h4 { margin-bottom: 10px }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px }
+.role { background: var(--panel); border: 2px solid transparent; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.role.on { border-color: var(--blue); background: var(--blue-soft) }
 .role p { color: var(--muted); font-size: 14px }
 .role .meta { font: 400 12px var(--mono); color: var(--faint); margin-top: auto }
-.role .row button { flex: 1 }
-.role button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: var(--card) }
-
-aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 14px); background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 0 }
-aside header { padding: 16px; border-bottom: 1px solid var(--line) }
-aside .body { padding: 16px; display: flex; flex-direction: column; gap: 16px; max-height: 62vh; overflow: auto }
-aside h4 { margin: 0 0 6px; font: 500 12px var(--mono); color: var(--faint) }
+.role .actions { display: flex; justify-content: space-between; gap: 8px; align-items: center }
+.role button.add[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: var(--on-blue) }
+.round { width: 40px; padding: 0; border-color: var(--faint); background: transparent; flex: none }
+aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 82px); background: var(--night); color: var(--on-night); border-radius: 28px; overflow: hidden; min-width: 0 }
+aside header { padding: 22px 22px 0 }
+aside header p { color: var(--night-muted) }
+aside .body { padding: 18px 22px; display: flex; flex-direction: column; gap: 18px; max-height: 52vh; overflow: auto }
+aside h4 { color: var(--night-muted) }
 aside ul { padding-left: 18px; font-size: 14px }
-.pill { display: inline-block; font: 500 12px var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; margin: 0 4px 4px 0 }
-pre { margin: 0; font: 400 12.5px/1.55 var(--mono); background: var(--hero); color: var(--hero-ink); border-radius: 10px; padding: 12px; overflow-x: auto; white-space: pre }
-aside footer { padding: 14px 16px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap }
-aside footer button { flex: 1 }
+aside .tag { border-color: var(--night-line) }
+aside footer { padding: 16px 22px 22px; display: flex; flex-direction: column; gap: 8px }
+aside footer button.line { background: transparent; border-color: var(--night-line); color: var(--on-night) }
+.tag { display: inline-block; font: 400 12px var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; margin: 0 4px 5px 0 }
+pre { margin: 0; font: 400 12.5px/1.6 var(--mono); background: #16171b; color: #f4f5f7; border-radius: 14px; padding: 14px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere }
 
-ol.steps { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink) }
-ol.steps li { padding: 14px 16px 0 0 }
-ol.steps b { display: block; font: 500 12px var(--mono); color: var(--signal); margin-bottom: 6px }
-ol.steps p { color: var(--muted); font-size: 14px; margin-top: 4px }
-.skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 22px; margin-top: 18px }
-.skills button { display: block; text-align: left; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; padding: 12px 0; font-weight: 400 }
-.skills code { font: 500 13px var(--mono); color: var(--ink); display: block; margin-bottom: 3px }
+ol.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 28px }
+ol.steps li { background: var(--panel); border-radius: 24px; padding: 22px }
+ol.steps b { display: block; font: 900 44px/1 var(--display); color: var(--blue); text-transform: uppercase; margin-bottom: 14px }
+ol.steps p { color: var(--muted); font-size: 14px; margin-top: 8px }
+
+.option { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; background: var(--panel); border-radius: 32px; padding: 30px; margin-top: 18px }
+.option dl { margin: 18px 0 0; display: grid; gap: 12px }
+.option dt { font: 400 12px var(--mono); color: var(--faint) }
+.option dd { margin: 0 }
+.option ol { list-style: none; padding: 0; counter-reset: step; display: grid; gap: 10px; align-content: start }
+.option ol li { counter-increment: step; display: flex; gap: 14px; background: var(--card); border-radius: 18px; padding: 14px 16px; overflow-wrap: anywhere }
+.option ol li::before { content: counter(step); font: 900 24px/1 var(--display); color: var(--blue); flex: none; min-width: 14px }
+
+.pack { background: var(--panel); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.pack .stars { font: 900 40px/1 var(--display); color: var(--blue); text-transform: uppercase }
+.pack p { color: var(--muted); font-size: 14px }
+.pack small { font: 400 12px var(--mono); color: var(--faint); overflow-wrap: anywhere }
+.pack .actions { display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; align-items: center }
+.skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 0 26px; margin-top: 26px }
+.skills button { display: block; text-align: left; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; padding: 16px 0; font-weight: 400 }
+.skills code { font: 500 13px var(--mono); display: block; margin-bottom: 4px }
+.skills button:hover code { color: var(--blue) }
 .skills span { color: var(--muted); font-size: 13.5px }
-footer.page { padding-block: 48px 40px; color: var(--faint); font-size: 13px }
+footer.page { background: var(--night); color: var(--night-muted); margin-top: 96px; border-radius: 36px 36px 0 0; padding-block: 56px 40px; font-size: 14px }
+footer.page h2 { color: var(--on-night); margin-bottom: 20px }
+footer.page p { max-width: 70ch; margin-top: 24px }
 
-dialog { border: 0; padding: 0; width: min(640px, 100%); height: 100%; max-height: 100%; margin: 0 0 0 auto; background: var(--card); color: var(--ink) }
+dialog { border: 0; padding: 0; width: min(660px, 100%); height: 100%; max-height: 100%; margin: 0 0 0 auto; background: var(--card); color: var(--ink) }
 dialog[open] { display: flex; flex-direction: column }
-dialog::backdrop { background: rgb(8 9 24 / 55%) }
-dialog header { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: calc(18px + env(safe-area-inset-top, 0px)) 20px 14px; border-bottom: 1px solid var(--line) }
-dialog .body { padding: 18px 20px; overflow: auto; flex: 1; display: flex; flex-direction: column; gap: 16px }
-dialog h4 { margin: 0 0 6px; font: 500 12px var(--mono); color: var(--faint) }
+dialog::backdrop { background: rgb(0 0 0 / 55%) }
+dialog header { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: calc(20px + env(safe-area-inset-top, 0px)) 22px 14px; border-bottom: 1px solid var(--line) }
+dialog .body { padding: 20px 22px; overflow: auto; flex: 1; display: flex; flex-direction: column; gap: 18px }
 dialog ul { padding-left: 18px }
-dialog .body pre { white-space: pre-wrap; overflow-wrap: anywhere; flex: none }
-dialog footer { padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line) }
-#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); border-radius: 10px; padding: 9px 16px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; max-width: calc(100% - 32px); font-weight: 600 }
+dialog .body pre { flex: none }
+dialog footer { padding: 14px 22px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line) }
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); border-radius: 999px; padding: 10px 20px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 40; max-width: calc(100% - 32px); font-weight: 600 }
 #toast.show { opacity: 1 }
 
-@media (max-width: 940px) {
-  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 36px 36px }
-  .layout { grid-template-columns: minmax(0, 1fr) }
+@media (max-width: 1080px) {
+  .nav .wrap { grid-template-columns: 1fr auto }
+  .nav .go { display: none }
+  .nav .burger { display: inline-flex; align-items: center; gap: 8px }
+  .nav .links, .nav.solid .links { display: none; position: absolute; top: calc(100% - 2px); left: 20px; right: 20px; flex-direction: column; border-radius: 24px; padding: 8px; background: var(--card); box-shadow: 0 18px 50px rgb(0 0 0 / 25%) }
+  .nav.open .links, .nav.solid.open .links { display: flex; background: var(--card) }
+  .nav .links a { padding: 13px 16px; font-size: 16px }
+}
+@media (max-width: 960px) {
+  .hero .grid, .layout, .option { grid-template-columns: minmax(0, 1fr) }
   aside { position: static }
   aside .body { max-height: none }
   ol.steps { grid-template-columns: repeat(2, minmax(0, 1fr)) }
@@ -114,65 +158,100 @@ dialog footer { padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px))
 @media (max-width: 560px) {
   ol.steps { grid-template-columns: minmax(0, 1fr) }
   .chart g.node text { font-size: 19px }
+  .option { padding: 18px }
   dialog { width: 100%; max-width: 100% }
+  section.block { padding-top: 60px }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .chart .link.on { stroke-dasharray: 6 6; animation: flow 1.4s linear infinite }
-  @keyframes flow { to { stroke-dashoffset: -24 } }
-}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } * { transition: none !important } }
 </style>
 
-<div class="hero">
+<nav class="nav" id="nav" aria-label="Разделы">
   <div class="wrap">
-    <div>
-      <div class="logo"><i></i>AI Crew</div>
-      <h1>Команда ИИ‑агентов для вашего бизнеса</h1>
-      <p class="lead">Двенадцать ролей на Claude: у каждой миссия, навыки, метрики и список того, что она делает только с вашего согласия. Соберите свою команду и получите план внедрения.</p>
-      <div class="row">
-        <button type="button" class="cta" id="start">Собрать команду</button>
-        <button type="button" class="line" id="how-btn">Как внедряется</button>
-      </div>
+    <a class="logo" href="#top"><b>A</b>AI Crew</a>
+    <div class="links" id="links">
+      <a href="#team">Команда</a>
+      <a href="#how">14 дней</a>
+      <a href="#options">Варианты внедрения</a>
+      <a href="#packs">Наборы навыков</a>
+      <a href="#core">В комплекте</a>
     </div>
-    <figure class="chart">
-      <div id="chart"></div>
-      <figcaption id="chart-note"></figcaption>
-    </figure>
+    <a class="pill go" href="#team">Собрать команду<i aria-hidden="true">↗</i></a>
+    <button type="button" class="burger" id="burger" aria-expanded="false" aria-controls="links">Меню <span aria-hidden="true">☰</span></button>
+  </div>
+</nav>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <h1>Команда <em>ИИ‑агентов</em> для бизнеса</h1>
+        <p class="lead">Роли на Claude: у каждой миссия, навыки, метрики и список того, что она делает только с вашего согласия. Соберите свою команду и получите план внедрения.</p>
+        <div class="row">
+          <a class="pill" href="#team">Собрать команду<i aria-hidden="true">↗</i></a>
+          <button type="button" class="line" id="to-options">Как внедрить</button>
+        </div>
+      </div>
+      <figure class="chart">
+        <div id="chart"></div>
+        <figcaption id="chart-note"></figcaption>
+      </figure>
+    </div>
+    <div class="numbers" id="numbers"></div>
   </div>
 </div>
 
-<main class="wrap">
-  <section class="block" id="team">
+<main>
+  <section class="block wrap" id="team">
     <h2>Кто нужен вашему бизнесу</h2>
     <p class="sub">Начните с готового набора по типу бизнеса, потом добавьте или уберите роли.</p>
-    <div class="row presets" id="presets" role="group" aria-label="Тип бизнеса"></div>
+    <div class="row tabs" id="presets" role="group" aria-label="Тип бизнеса"></div>
     <div class="layout">
       <div id="roster"></div>
       <aside aria-label="Ваша команда">
-        <header><h3 id="crew-title">Ваша команда</h3><p class="sub" id="crew-sub"></p></header>
+        <header><h3>Ваша команда</h3><p id="crew-sub"></p></header>
         <div class="body" id="crew"></div>
-        <footer><button type="button" class="cta" id="copy-plan">Скопировать план внедрения</button><button type="button" id="copy-install">Скопировать установку</button></footer>
+        <footer><button type="button" class="pill" id="copy-plan">Скопировать план внедрения<i aria-hidden="true">↗</i></button><button type="button" class="line" id="copy-install">Скопировать установку</button></footer>
       </aside>
     </div>
   </section>
 
-  <section class="block" id="how">
+  <section class="block wrap" id="how">
     <h2>Внедрение за 14 дней</h2>
     <ol class="steps">
-      <li><b>День 1</b><h3>Знакомство с компанией</h3><p>Агент задаёт вопросы и записывает ответы в один файл. Его читают все остальные.</p></li>
+      <li><b>День 1</b><h3>Знакомство</h3><p>Агент задаёт вопросы о компании и записывает ответы в один файл. Его читают все остальные.</p></li>
       <li><b>Дни 2–4</b><h3>Подключения</h3><p>Календарь, таблицы, CRM и диск. Сначала только на чтение.</p></li>
-      <li><b>Дни 5–10</b><h3>Работа под присмотром</h3><p>Агенты готовят черновики и расчёты. Отправляет, платит и публикует человек.</p></li>
-      <li><b>Дни 11–14</b><h3>Разбор и регламенты</h3><p>Смотрим метрики, убираем лишние роли и закрепляем то, что сработало.</p></li>
+      <li><b>Дни 5–10</b><h3>Под присмотром</h3><p>Агенты готовят черновики и расчёты. Отправляет, платит и публикует человек.</p></li>
+      <li><b>Дни 11–14</b><h3>Разбор</h3><p>Смотрим метрики, убираем лишние роли и закрепляем то, что сработало.</p></li>
     </ol>
   </section>
 
-  <section class="block">
+  <section class="block wrap" id="options">
+    <h2>Варианты внедрения</h2>
+    <p class="sub">От получаса без техники до своего продукта. Выберите вариант и идите по шагам.</p>
+    <div class="row tabs" id="option-tabs" role="tablist" aria-label="Вариант внедрения"></div>
+    <div id="option" role="tabpanel"></div>
+  </section>
+
+  <section class="block wrap" id="packs">
+    <h2>Популярные наборы навыков</h2>
+    <p class="sub" id="packs-note"></p>
+    <div class="cards" id="pack-list" style="margin-top:26px"></div>
+  </section>
+
+  <section class="block wrap" id="core">
     <h2>Базовые навыки в комплекте</h2>
     <p class="sub">Готовые порядки действий, которые агенты используют сами. Нажмите, чтобы прочитать.</p>
     <div class="skills" id="skills"></div>
   </section>
-
-  <footer class="page">Агенты готовят материалы и расчёты, решения принимает человек. Они не заменяют юриста, бухгалтера и финансового советника. Названия дополнительных навыков принадлежат их авторам и ставятся отдельно.</footer>
 </main>
+
+<footer class="page">
+  <div class="wrap">
+    <h2>Начните с трёх ролей</h2>
+    <a class="pill" href="#team">Собрать команду<i aria-hidden="true">↗</i></a>
+    <p>Агенты готовят материалы и расчёты, решения принимает человек. Они не заменяют юриста, бухгалтера и финансового советника. Сторонние наборы навыков принадлежат своим авторам и ставятся отдельно: перед установкой читайте, что они делают.</p>
+  </div>
+</footer>
 
 <dialog id="sheet" aria-labelledby="sheet-title"></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -190,14 +269,16 @@ const PRESETS = [
   ['all', 'Все роли', DATA.roles.map((r) => r.id)],
 ];
 const byId = Object.fromEntries(DATA.roles.map((r) => [r.id, r]));
-const skillById = Object.fromEntries(DATA.skills.map((s) => [s.id, s]));
 const $ = (s) => document.querySelector(s);
 const store = {
   get: () => { try { return JSON.parse(localStorage.getItem('crew') || 'null'); } catch { return null; } },
   set: (v) => { try { localStorage.setItem('crew', JSON.stringify(v)); } catch { /* private mode */ } },
 };
 const saved = store.get();
-const picked = new Set(Array.isArray(saved) ? saved.filter((id) => byId[id]) : PRESETS[0][2]);
+const remembered = Array.isArray(saved) ? saved.filter((id) => byId[id]) : [];
+// An empty saved team would open as a blank page, so start from the first preset instead.
+const picked = new Set(remembered.length ? remembered : PRESETS[0][2]);
+let option = DATA.options[0].id;
 
 function h(tag, props, ...children) {
   const node = document.createElement(tag);
@@ -218,6 +299,7 @@ function s(tag, props, ...children) {
   node.append(...children.flat());
   return node;
 }
+const arrow = () => h('i', { 'aria-hidden': 'true' }, '↗');
 function toast(text) {
   const box = $('#toast');
   box.textContent = text;
@@ -243,11 +325,12 @@ const plural = (n, one, few, many) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 
 const installText = () => '/plugin marketplace add ' + REPO + '\n/plugin install ai-crew@ai-crew\n/ai-crew:company-setup';
 function planText() {
   const t = team();
+  const way = DATA.options.find((o) => o.id === option);
   const block = (title, items) => title + '\n' + items.map((i) => '- ' + i).join('\n');
   return [
     'План внедрения AI Crew',
     block('Команда:', t.map((r) => r.name + ': ' + r.title.toLowerCase())),
-    'День 1. Установка и знакомство с компанией:\n' + installText(),
+    block('Вариант внедрения: ' + way.name + ' (' + way.effort + ')', way.steps),
     block('Дни 2–4. Подключить, сначала только чтение:', unique('connectors')),
     block('Дни 5–10. Каждой роли дать первую задачу:', t.map((r) => r.name + ': ' + r.outputs[0])),
     block('Только после согласия человека:', unique('approvals')),
@@ -263,15 +346,15 @@ function openSheet(title, subtitle, body, footer) {
   if (!sheet.open) sheet.showModal();
 }
 const listBlock = (title, items) => h('div', null, h('h4', null, title), h('ul', null, items.map((i) => h('li', null, i))));
+const tags = (title, items) => h('div', null, h('h4', null, title), items.map((i) => h('span', { class: 'tag' }, i)));
 function openRole(r) {
   openSheet(r.name, r.title, [
     h('p', null, r.mission),
     listBlock('Отвечает за', r.owns), listBlock('Что отдаёт', r.outputs), listBlock('Метрики', r.kpis),
-    h('div', null, h('h4', null, 'Базовые навыки'), r.skills.map((id) => h('span', { class: 'pill' }, id))),
-    h('div', null, h('h4', null, 'Популярные дополнения, ставятся отдельно'), r.addons.map((a) => h('span', { class: 'pill' }, a))),
+    tags('Базовые навыки', r.skills), tags('Популярные дополнения, ставятся отдельно', r.addons),
     listBlock('Только с вашего «да»', r.approvals), listBlock('Никогда', r.never),
     h('div', null, h('h4', null, 'Инструкция агента'), h('pre', null, r.prompt)),
-  ], h('button', { type: 'button', class: 'cta', onclick: () => copy(r.prompt, 'Инструкция скопирована. Вставьте её в проект Claude.') }, 'Скопировать инструкцию агента'));
+  ], h('button', { type: 'button', class: 'pill', onclick: () => copy(r.prompt, 'Инструкция скопирована') }, 'Скопировать инструкцию агента', arrow()));
 }
 
 function toggle(id) {
@@ -287,8 +370,8 @@ function paintChart() {
   const cols = narrow ? 2 : 4;
   const width = narrow ? 420 : 640;
   const cw = narrow ? 190 : 138;
-  const ch = narrow ? 52 : 44;
-  const rowGap = narrow ? 70 : 78;
+  const ch = narrow ? 52 : 46;
+  const rowGap = narrow ? 70 : 82;
   const height = 100 + Math.ceil(others.length / cols) * rowGap;
   const gap = (width - cols * cw) / (cols + 1);
   const links = [];
@@ -297,7 +380,7 @@ function paintChart() {
     const on = picked.has(r.id);
     return s('g', { class: 'node ' + (extra || '') + (on ? ' on' : ''), tabindex: '0', role: 'button', 'aria-pressed': String(on), 'aria-label': r.name,
       onclick: () => toggle(r.id), onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(r.id); } } },
-    s('rect', { x, y, width: cw, height: ch, rx: '10' }), s('text', { x: x + cw / 2, y: y + ch / 2 + 5, 'text-anchor': 'middle' }, r.name));
+    s('rect', { x, y, width: cw, height: ch, rx: String(ch / 2) }), s('text', { x: x + cw / 2, y: y + ch / 2 + 5, 'text-anchor': 'middle' }, r.name));
   };
   others.forEach((r, i) => {
     const x = gap + (i % cols) * (cw + gap);
@@ -310,11 +393,20 @@ function paintChart() {
     on ? links.push(path) : links.unshift(path);
     nodes.push(node(r, x, y));
   });
-  nodes.push(node(boss, (width - cw) / 2, 10, picked.has(boss.id) ? 'boss' : ''));
+  nodes.push(node(boss, (width - cw) / 2, 10, 'boss'));
   const focused = document.activeElement?.closest?.('#chart g.node')?.getAttribute('aria-label');
   $('#chart').replaceChildren(s('svg', { viewBox: '0 0 ' + width + ' ' + height, role: 'group', 'aria-label': 'Схема команды' }, links, nodes));
   if (focused) [...document.querySelectorAll('#chart g.node')].find((g) => g.getAttribute('aria-label') === focused)?.focus();
   $('#chart-note').textContent = 'Нажмите на роль, чтобы добавить или убрать. Выбрано: ' + picked.size + ' из ' + DATA.roles.length;
+}
+
+function paintOption() {
+  const way = DATA.options.find((o) => o.id === option);
+  $('#option-tabs').replaceChildren(...DATA.options.map((o) => h('button', { type: 'button', role: 'tab', id: 'tab-' + o.id, 'aria-selected': String(o.id === option), onclick: () => { option = o.id; paintOption(); $('#tab-' + o.id).focus(); } }, o.name)));
+  const fact = (term, value) => h('div', null, h('dt', null, term), h('dd', null, value));
+  $('#option').replaceChildren(h('div', { class: 'option' },
+    h('div', null, h('h3', null, way.name), h('dl', null, fact('Кому подходит', way.who), fact('Сколько времени', way.effort), fact('Что нужно', way.need), fact('Ограничение', way.limit))),
+    h('ol', null, way.steps.map((step) => h('li', null, h('span', null, step))))));
 }
 
 function paint() {
@@ -322,34 +414,59 @@ function paint() {
   const preset = PRESETS.find(([, , ids]) => ids.length === picked.size && ids.every((id) => picked.has(id)));
   $('#presets').replaceChildren(...PRESETS.map(([id, label, ids]) => h('button', { type: 'button', 'aria-pressed': String(preset?.[0] === id), onclick: () => { picked.clear(); ids.forEach((x) => picked.add(x)); store.set([...picked]); paint(); } }, label)));
   const groups = [...new Set(DATA.roles.map((r) => r.group))];
-  $('#roster').replaceChildren(...groups.map((g) => h('div', { class: 'group' }, h('p', null, g), h('div', { class: 'roster' }, DATA.roles.filter((r) => r.group === g).map((r) => {
+  $('#roster').replaceChildren(...groups.map((g) => h('div', { class: 'group' }, h('h4', null, g), h('div', { class: 'cards' }, DATA.roles.filter((r) => r.group === g).map((r) => {
     const on = picked.has(r.id);
-    return h('article', { class: 'role c-' + r.color + (on ? ' on' : '') },
-      h('div', { class: 'top' }, h('h3', null, r.name)),
+    return h('article', { class: 'role' + (on ? ' on' : '') },
+      h('h3', null, r.name),
       h('p', null, r.title),
       h('span', { class: 'meta' }, plural(r.skills.length, 'навык', 'навыка', 'навыков') + ' + ' + plural(r.addons.length, 'дополнение', 'дополнения', 'дополнений')),
-      h('div', { class: 'row' }, h('button', { type: 'button', 'aria-pressed': String(on), onclick: () => toggle(r.id) }, on ? 'В команде' : 'Добавить'), h('button', { type: 'button', onclick: () => openRole(r) }, 'Подробнее')));
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'add', 'aria-pressed': String(on), onclick: () => toggle(r.id) }, on ? 'В команде' : 'Добавить'),
+        h('button', { type: 'button', class: 'round', 'aria-label': 'Подробнее: ' + r.name, title: 'Подробнее', onclick: () => openRole(r) }, '→')));
   })))));
   const t = team();
   $('#crew-sub').textContent = t.length ? plural(t.length, 'агент', 'агента', 'агентов') + ', ' + plural(unique('skills').length, 'базовый навык', 'базовых навыка', 'базовых навыков') : 'Выберите хотя бы одну роль';
   $('#copy-plan').disabled = !t.length;
   $('#crew').replaceChildren(...(t.length ? [
-    h('div', null, h('h4', null, 'Состав'), t.map((r) => h('span', { class: 'pill c-' + r.color }, r.name))),
+    tags('Состав', t.map((r) => r.name)),
     h('div', null, h('h4', null, 'Установка в Claude Code'), h('pre', null, installText())),
-    listBlock4('Что подключить', unique('connectors')),
-    listBlock4('Останется за человеком', unique('approvals')),
-  ] : [h('p', { class: 'sub' }, 'Нажмите на роль в схеме или выберите тип бизнеса.')]));
+    listBlock('Что подключить', unique('connectors')),
+    listBlock('Останется за человеком', unique('approvals')),
+  ] : [h('p', null, 'Нажмите на роль в схеме или выберите тип бизнеса.')]));
 }
-const listBlock4 = (title, items) => h('div', null, h('h4', null, title), h('ul', null, items.map((i) => h('li', null, i))));
 
-$('#skills').replaceChildren(...DATA.skills.map((k) => h('button', { type: 'button', onclick: () => openSheet(k.id, k.description, [h('pre', null, k.body)], h('button', { type: 'button', class: 'cta', onclick: () => copy(k.body, 'Навык скопирован') }, 'Скопировать навык')) }, h('code', null, k.id), h('span', null, k.description))));
+$('#numbers').replaceChildren(...[[DATA.roles.length, 'агентов по ролям'], [DATA.skills.length, 'навыков в комплекте'], [DATA.options.length, 'вариантов внедрения']].map(([n, label]) => h('div', null, h('b', null, String(n)), h('span', null, label))));
+$('#packs-note').textContent = 'Самые заметные открытые наборы по звёздам GitHub на ' + DATA.ecosystem.checked + '. Это чужие проекты: прочитайте, что они делают, и ставьте только нужные.';
+$('#pack-list').replaceChildren(...DATA.ecosystem.packs.map((p) => h('article', { class: 'pack' },
+  h('span', { class: 'stars' }, '★ ' + p.stars), h('h3', null, p.name), h('p', null, p.what), h('small', null, 'Для: ' + p.roles + ' · ' + p.license),
+  h('div', { class: 'actions' }, h('button', { type: 'button', onclick: () => copy(p.install, 'Команда скопирована') }, 'Скопировать установку'),
+    h('a', { href: 'https://github.com/' + p.repo, target: '_blank', rel: 'noopener' }, 'GitHub ↗')))));
+$('#skills').replaceChildren(...DATA.skills.map((k) => h('button', { type: 'button', onclick: () => openSheet(k.id, k.description, [h('pre', null, k.body)], h('button', { type: 'button', class: 'pill', onclick: () => copy(k.body, 'Навык скопирован') }, 'Скопировать навык', arrow())) }, h('code', null, k.id), h('span', null, k.description))));
+
+// Navigation: scrolling by script also works where the page is embedded.
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const go = (id) => $(id).scrollIntoView({ behavior: calm ? 'auto' : 'smooth' });
-$('#start').addEventListener('click', () => go('#team'));
-$('#how-btn').addEventListener('click', () => go('#how'));
+const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth' });
+const nav = $('#nav');
+const setMenu = (open) => { nav.classList.toggle('open', open); $('#burger').setAttribute('aria-expanded', String(open)); };
+$('#burger').addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (link) { e.preventDefault(); setMenu(false); go(link.getAttribute('href').slice(1)); } else if (!e.target.closest('#nav')) setMenu(false);
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+const sections = ['team', 'how', 'options', 'packs', 'core'];
+function markSection() {
+  nav.classList.toggle('solid', scrollY > 24);
+  const line = innerHeight * 0.35;
+  const current = sections.filter((id) => document.getElementById(id).getBoundingClientRect().top <= line).pop();
+  for (const a of document.querySelectorAll('#links a')) a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + current));
+}
+addEventListener('scroll', markSection, { passive: true });
+$('#to-options').addEventListener('click', () => go('options'));
 $('#copy-plan').addEventListener('click', () => copy(planText(), 'План внедрения скопирован'));
 $('#copy-install').addEventListener('click', () => copy(installText(), 'Команды установки скопированы'));
 matchMedia('(max-width: 560px)').addEventListener('change', paintChart);
 paint();
+paintOption();
+markSection();
 })();
 </script>

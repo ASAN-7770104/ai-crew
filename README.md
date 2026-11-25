@@ -33,7 +33,7 @@
 
 Без Claude Code: откройте сайт-каталог (`site/index.html`), скопируйте инструкцию нужного агента и вставьте в проект Claude.
 
-Порядок внедрения клиенту за 14 дней: [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
+Восемь вариантов внедрения, порядок на 14 дней и популярные наборы навыков: [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
 ## Правила, общие для всех агентов
 
@@ -52,6 +52,8 @@
 
 ```
 data/roles.json     роли: единственный источник правды
+data/options.json   варианты внедрения (сайт и руководство)
+data/ecosystem.json популярные наборы навыков
 plugin/skills/      базовые навыки
 plugin/agents/      генерируются из roles.json
 site/template.html  сайт-каталог

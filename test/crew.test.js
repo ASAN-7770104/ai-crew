@@ -51,3 +51,22 @@ test('unit economics with a loss and with bad input', () => {
   assert.throws(() => unitEconomics({ price: 100 }), /variableCost/);
   assert.throws(() => unitEconomics({ price: 100, variableCost: 1, paymentFee: 3, cac: 1, purchasesPerMonth: 1, lifetimeMonths: 1, fixedCosts: 1 }), /share/);
 });
+
+test('implementation options are complete and written into the guide', () => {
+  const options = JSON.parse(read('data/options.json'));
+  const guide = build().get('docs/IMPLEMENTATION.md');
+  for (const option of options) {
+    for (const key of ['id', 'name', 'who', 'effort', 'need', 'limit']) assert.ok(option[key], `${option.id}.${key}`);
+    assert.ok(option.steps.length >= 3, option.id);
+    assert.ok(guide.includes(`## ${option.name}`));
+  }
+});
+
+test('every suggested pack has a source, a licence note and an install command', () => {
+  const { packs } = JSON.parse(read('data/ecosystem.json'));
+  for (const pack of packs) {
+    assert.match(pack.repo, /^[\w.-]+\/[\w.-]+$/);
+    assert.ok(pack.license && pack.stars && pack.install.includes(pack.repo));
+  }
+});
+
