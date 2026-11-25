@@ -485,8 +485,11 @@ const switcher = $('#lang');
 switcher.textContent = L('EN', 'RU');
 switcher.addEventListener('click', () => {
   const next = L('en', 'ru');
-  try { localStorage.setItem('crew-lang', next); } catch { /* the address carries the choice */ }
+  let stored = true;
+  try { localStorage.setItem('crew-lang', next); } catch { stored = false; }
   const url = new URL(location.href);
+  // An address that already names a language wins over storage, so it has to change too.
+  if (stored && !url.searchParams.has('lang')) { location.reload(); return; }
   url.searchParams.set('lang', next);
   location.replace(url);
 });
