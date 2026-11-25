@@ -1,0 +1,13 @@
+{
+  "checked": "25.11.2026",
+  "packs": [
+    { "name": "Anthropic Skills", "repo": "anthropics/skills", "stars": "200 тыс.", "license": "условия в каждой папке", "what": "Документы, таблицы, презентации, PDF, дизайн интерфейсов, создание навыков и MCP-серверов.", "roles": "все роли", "install": "npx skills add anthropics/skills" },
+    { "name": "Knowledge Work Plugins", "repo": "anthropics/knowledge-work-plugins", "stars": "36 тыс.", "license": "Apache-2.0", "what": "Продажи, маркетинг, финансы, право, HR, операции, поддержка, продукт, данные.", "roles": "CRO, CMO, CFO, юрист, HR, COO", "install": "claude plugin marketplace add anthropics/knowledge-work-plugins" },
+    { "name": "Marketing Skills", "repo": "coreyhaines31/marketingskills", "stars": "62 тыс.", "license": "MIT", "what": "Конверсия, тексты, SEO, аналитика, реклама и рост.", "roles": "CMO, контент, CRO", "install": "npx skills add coreyhaines31/marketingskills" },
+    { "name": "Superpowers", "repo": "obra/superpowers", "stars": "326 тыс.", "license": "MIT", "what": "Порядок разработки: планы, тесты до кода, разбор ошибок, проверка перед сдачей.", "roles": "CTO, CPO", "install": "npx skills add obra/superpowers" },
+    { "name": "Matt Pocock Skills", "repo": "mattpocock/skills", "stars": "332 тыс.", "license": "MIT", "what": "Инженерные навыки: расспрос до ясности, спецификации, задачи, отладка, передача работы.", "roles": "CTO, CPO, дирижёр", "install": "npx skills add mattpocock/skills" },
+    { "name": "UI UX Pro Max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "stars": "153 тыс.", "license": "MIT", "what": "Подбор стилей, палитр, шрифтов и правил интерфейса.", "roles": "CPO, контент", "install": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill" },
+    { "name": "Vercel Agent Skills", "repo": "vercel-labs/agent-skills", "stars": "34 тыс.", "license": "условия в репозитории", "what": "Практики React и Next.js и проверка веб-интерфейсов.", "roles": "CTO", "install": "npx skills add vercel-labs/agent-skills" },
+    { "name": "HyperFrames", "repo": "heygen-com/hyperframes", "stars": "89 тыс.", "license": "Apache-2.0", "what": "Монтаж и сборка видео вместе с Claude.", "roles": "контент", "install": "npx skills add heygen-com/hyperframes" }
+  ]
+}
